@@ -9,9 +9,6 @@ import ru.rsreu.jackal.services.UserService
 @RestController
 @RequestMapping("api/users")
 class UserController(val userService: UserService) {
-
     @GetMapping("/test")
-    fun test(): User? {
-        return userService.create()
-    }
+    fun test(): User? = userService.create()
 }

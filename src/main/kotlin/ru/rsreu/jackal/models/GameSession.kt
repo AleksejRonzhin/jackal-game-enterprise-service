@@ -4,11 +4,11 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-@Table(name="GAME_SESSIONS")
-class GameSession (
+@Table(name = "game_sessions", schema = "public")
+class GameSession(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long? = null,
+    val id: Long? = null,
 
     @ManyToOne
     val gameMode: GameMode,
@@ -19,4 +19,8 @@ class GameSession (
 
     @Enumerated(EnumType.ORDINAL)
     val sessionStatus: GameSessionStatus
-    )
+)
+
+enum class GameSessionStatus {
+    STARTED, FINISHED, PREMATURELY_ENDED
+}

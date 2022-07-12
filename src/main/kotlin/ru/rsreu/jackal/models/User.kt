@@ -3,11 +3,18 @@ package ru.rsreu.jackal.models
 import javax.persistence.*
 
 @Entity
-@Table(name = "USERS")
+@Table(name = "users", schema = "public")
 class User(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long? = null,
+    val id: Long? = null,
 
-    var name: String
+    val name: String,
+
+    @Enumerated(EnumType.ORDINAL)
+    val role: Role
 )
+
+enum class Role {
+    USER, ADMIN
+}

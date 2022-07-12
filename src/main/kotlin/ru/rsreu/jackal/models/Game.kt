@@ -3,15 +3,15 @@ package ru.rsreu.jackal.models
 import javax.persistence.*
 
 @Entity
-@Table(name = "GAMES")
+@Table(name = "games", schema = "public")
 class Game(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long? = null,
+    val id: Long? = null,
 
-    var serviceAddress: String,
+    val serviceAddress: String,
 
-    var clientAddress: String,
+    val clientAddress: String,
 
-    var maxPLayerNumber: Int
+    val maxPLayerNumber: Int
 )
