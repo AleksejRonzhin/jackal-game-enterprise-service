@@ -1,6 +1,7 @@
 package ru.rsreu.jackal.security.user
 
 import ru.rsreu.jackal.api.models.User
+import ru.rsreu.jackal.security.authentication.provider.ExternalAuthenticationProviderType
 import javax.persistence.*
 
 @Entity
@@ -15,5 +16,8 @@ class AuthenticationProviderUser(
 
     val authenticationPrincipal: String,
 
-    val externalAuthenticationProvider: ExternalAuthenticationProvider
+    val externalAuthenticationProvider: ExternalAuthenticationProviderType,
+
+    @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val refreshTokens: List<RefreshToken>
 )

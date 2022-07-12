@@ -6,15 +6,13 @@ import javax.persistence.*
 @Table(name = "users", schema = "public")
 class User(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
     val name: String,
 
-    @Enumerated(EnumType.ORDINAL)
-    val role: Role
-)
+    val pictureUrl: String,
 
-enum class Role {
-    USER, ADMIN
-}
+    @ManyToMany
+    val permissions: List<Permission>,
+)

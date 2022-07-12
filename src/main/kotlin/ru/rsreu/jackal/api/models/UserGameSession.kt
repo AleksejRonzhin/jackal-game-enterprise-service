@@ -6,7 +6,7 @@ import javax.persistence.*
 @Table(name = "user_game_sessions", schema = "public")
 class UserGameSession(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
     @ManyToOne

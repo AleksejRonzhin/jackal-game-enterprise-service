@@ -1,91 +1,67 @@
 package ru.rsreu.jackal.security.authentication
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import org.springframework.http.*
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.exchange
-import org.springframework.web.client.getForEntity
 import ru.rsreu.jackal.api.services.UserService
+import ru.rsreu.jackal.security.authentication.provider.ExternalAuthenticationProvider
+import ru.rsreu.jackal.security.authentication.provider.ExternalAuthenticationProviderType
 import ru.rsreu.jackal.security.user.AuthenticationProviderUser
 import ru.rsreu.jackal.security.user.AuthenticationProviderUserRepository
-import ru.rsreu.jackal.security.user.ExternalAuthenticationProvider
+import ru.rsreu.jackal.security.user.RefreshToken
+import ru.rsreu.jackal.security.user.RefreshTokenRepository
 
 @Service
 class ExternalAuthenticationService(
-    val httpClient: RestTemplate,
     val authenticationProviderUserRepository: AuthenticationProviderUserRepository,
-    val userService: UserService
+    val userService: UserService,
+    val refreshTokenRepository: RefreshTokenRepository,
+
+    @Qualifier("vkAuthenticationProvider")
+    val vkAuthenticationProvider: ExternalAuthenticationProvider,
+
+    @Qualifier("yandexAuthenticationProvider")
+    val yandexAuthenticationProvider: ExternalAuthenticationProvider
 ) {
     fun authenticateViaYandex(accessToken: String): AuthenticationProviderUser {
-        fun prepareYandexOAuthRequestEntity(accessToken: String): HttpEntity<Any> {
-            val headers = HttpHeaders()
-            headers["Authorization"] = "OAuth $accessToken"
-            return HttpEntity(headers)
-        }
-
-        val yandexPrincipal = getPrincipalFromResponse(
-            response = performOAuthCodeFlow(
-                url = "https://login.yandex.ru/info?format=json",
-                accessToken = accessToken,
-                requestEntityPreparer = ::prepareYandexOAuthRequestEntity
-            ),
-            principalKey = "default_email"
-        )
-        return authenticationProviderUserRepository.findByAuthenticationPrincipal(yandexPrincipal)
-            ?: createAuthenticationProviderUser(yandexPrincipal, ExternalAuthenticationProvider.YANDEX)
+        return performAuthentication(accessToken, yandexAuthenticationProvider)
     }
 
-    fun authenticateViaVk(accessToken: String): String {
-        println(accessToken)
-        val response = httpClient.getForEntity<String>("https://api.vk.com/method/account.getProfileInfo?access_token=$accessToken&v=5.131")
-        return response.body!!
+    fun authenticateViaVk(accessToken: String): AuthenticationProviderUser {
+        return performAuthentication(accessToken, vkAuthenticationProvider)
     }
 
-    fun getVkAccessToken(authorizationCode: String): String {
-        return getPrincipalFromResponse(httpClient.getForEntity<String>(
-            "https://oauth.vk.com/access_token?client_id=8216954" +
-                    "&client_secret=hJXK3GjJ0v2owpG1hwRX&redirect_uri=https://oauth.vk.com/blank.html&code=$authorizationCode"), "access_token")
-    }
-
-    private fun performOAuthCodeFlow(
-        url: String,
+    private fun performAuthentication(
         accessToken: String,
-        requestEntityPreparer: (String) -> HttpEntity<Any>
-    ): ResponseEntity<String> {
-        fun performGettingDataFromResourceServer(
-            oauthUrl: String,
-            accessToken: String,
-            requestEntityPreparer: (String) -> HttpEntity<Any>
-        ) = httpClient.exchange<String>(oauthUrl, HttpMethod.GET, requestEntityPreparer(accessToken))
-        val response = performGettingDataFromResourceServer(
-            url,
-            accessToken,
-            requestEntityPreparer
+        externalAuthenticationProvider: ExternalAuthenticationProvider
+    ): AuthenticationProviderUser {
+        val (principal, username) = externalAuthenticationProvider.getAuthentication(accessToken)
+        return getAuthenticationProviderUser(
+            principal = principal,
+            username = username,
+            provider = externalAuthenticationProvider.getProviderType
         )
-        if (response.statusCode != HttpStatus.OK) {
-            // TODO Exception types
-            throw IllegalArgumentException()
-        }
-        return response
     }
 
-    private fun getPrincipalFromResponse(
-        response: ResponseEntity<String>,
-        principalKey: String
-    ) = ObjectMapper().readTree(response.body).path(principalKey).asText()
+    private fun getAuthenticationProviderUser(
+        principal: String, username: String, provider: ExternalAuthenticationProviderType
+    ) = (authenticationProviderUserRepository.findByAuthenticationPrincipal(principal)
+        ?: createAuthenticationProviderUser(principal, username, provider))
 
     private fun createAuthenticationProviderUser(
-        principal: String,
-        authenticationProvider: ExternalAuthenticationProvider
+        principal: String, username: String, authenticationProvider: ExternalAuthenticationProviderType
     ): AuthenticationProviderUser {
-        val user = userService.create(principal)
+        val user = userService.create(username)
         return authenticationProviderUserRepository.save(
             AuthenticationProviderUser(
                 user = user,
                 authenticationPrincipal = principal,
-                externalAuthenticationProvider = authenticationProvider
+                externalAuthenticationProvider = authenticationProvider,
+                refreshTokens = emptyList()
             )
         )
+    }
+
+    fun createRefreshToken(refreshToken: String, user: AuthenticationProviderUser) {
+        refreshTokenRepository.save(RefreshToken(value = refreshToken, authenticationProviderUser = user))
     }
 }
