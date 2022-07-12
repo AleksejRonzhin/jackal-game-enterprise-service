@@ -3,11 +3,11 @@ package ru.rsreu.jackal.models
 import javax.persistence.*
 
 @Entity
-@Table(name = "USER_GAME_SESSIONS")
+@Table(name = "user_game_sessions", schema = "public")
 class UserGameSession(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long? = null,
+    val id: Long? = null,
 
     @ManyToOne
     val user: User,

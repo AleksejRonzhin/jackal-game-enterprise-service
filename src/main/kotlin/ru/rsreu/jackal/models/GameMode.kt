@@ -3,14 +3,14 @@ package ru.rsreu.jackal.models
 import javax.persistence.*
 
 @Entity
-@Table(name = "GAME_MODES")
+@Table(name = "game_modes", schema = "public")
 class GameMode(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long? = null,
+    val id: Long? = null,
 
     @ManyToOne
-    var game: Game,
+    val game: Game,
 
-    var title: String
+    val title: String
 )
