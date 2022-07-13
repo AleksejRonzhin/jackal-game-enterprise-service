@@ -23,6 +23,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.flywaydb:flyway-core:8.5.13")
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")

@@ -11,13 +11,13 @@ import org.springframework.security.web.SecurityFilterChain
 class SecurityConfiguration {
     @Bean
     fun webSecurityCustomizer() = WebSecurityCustomizer {
-
     }
 
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .httpBasic().disable()
+            .cors().disable()
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         return http.build()

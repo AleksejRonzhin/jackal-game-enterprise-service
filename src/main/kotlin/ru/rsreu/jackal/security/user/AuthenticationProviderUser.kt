@@ -2,6 +2,7 @@ package ru.rsreu.jackal.security.user
 
 import ru.rsreu.jackal.api.models.User
 import ru.rsreu.jackal.security.authentication.service.provider.ExternalAuthenticationProviderType
+import ru.rsreu.jackal.security.refresh.RefreshToken
 import javax.persistence.*
 
 @Entity

@@ -1,5 +1,6 @@
-package ru.rsreu.jackal.security.user
+package ru.rsreu.jackal.security.refresh
 
+import ru.rsreu.jackal.security.user.AuthenticationProviderUser
 import javax.persistence.*
 
 @Entity
