@@ -6,9 +6,10 @@ import org.springframework.web.bind.annotation.RestController
 import ru.rsreu.jackal.security.refresh.dto.RefreshRequest
 import ru.rsreu.jackal.security.refresh.dto.RefreshResponse
 import ru.rsreu.jackal.security.refresh.dto.RefreshResponseStatus
+import ru.rsreu.jackal.security.refresh.service.RefreshService
 
 @RestController
-class RefreshController {
+class RefreshController(private val refreshService: RefreshService) {
 
     fun refreshToken(@RequestBody body: RefreshRequest): ResponseEntity<RefreshResponse> {
         return ResponseEntity.ok(RefreshResponse("", "", RefreshResponseStatus.OK))

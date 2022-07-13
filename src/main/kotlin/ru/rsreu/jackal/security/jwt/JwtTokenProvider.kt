@@ -1,12 +1,13 @@
 package ru.rsreu.jackal.security.jwt
 
 import io.jsonwebtoken.Claims
+import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import ru.rsreu.jackal.api.models.Permission
-import ru.rsreu.jackal.security.user.AuthenticationProviderUser
+import ru.rsreu.jackal.api.models.User
 import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.crypto.SecretKey
@@ -22,15 +23,13 @@ class JwtTokenProvider(
     private val secretKey: SecretKey =
         Keys.hmacShaKeyFor(secretKeyStringRepresentation.toByteArray(StandardCharsets.UTF_8))
 
-    fun createAccessToken(authenticationProviderUser: AuthenticationProviderUser): String {
+    private val jwtParser = Jwts.parserBuilder().setSigningKey(secretKey).build()
+
+    fun createAccessToken(user: User): String {
         val now = Date()
         return Jwts.builder()
             .setClaims(
-                formClaims(
-                    authenticationProviderUser.user.id!!,
-                    authenticationProviderUser.user.name,
-                    authenticationProviderUser.user.permissions
-                )
+                formClaims(user.id!!, user.name, user.permissions)
             )
             .setIssuedAt(now)
             .setExpiration(Date(now.time + tokenExpiringMilliSeconds))
@@ -56,4 +55,8 @@ class JwtTokenProvider(
             .signWith(secretKey)
             .setHeaderParam("typ", "JWT")
             .compact()
+
+    fun getJwsClaims(jwt: String): Jws<Claims> = jwtParser.parseClaimsJws(jwt)
+
+    fun getJwtFromRefresh(refreshJwt: String): String = getJwsClaims(refreshJwt).body.subject
 }

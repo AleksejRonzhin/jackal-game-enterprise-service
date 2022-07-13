@@ -36,7 +36,7 @@ class ExternalAuthenticationController(
     private fun formSuccessAuthenticationResponse(
         authenticationProviderUser: AuthenticationProviderUser
     ): AuthenticationResponse {
-        val accessToken = jwtTokenProvider.createAccessToken(authenticationProviderUser)
+        val accessToken = jwtTokenProvider.createAccessToken(authenticationProviderUser.user)
         val refreshToken = jwtTokenProvider.createRefreshToken(accessToken)
         externalAuthenticationService.createRefreshToken(refreshToken, authenticationProviderUser)
         return AuthenticationResponse(
