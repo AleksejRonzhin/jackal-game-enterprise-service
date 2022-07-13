@@ -1,4 +1,4 @@
-package ru.rsreu.jackal.security.authentication.provider
+package ru.rsreu.jackal.security.authentication.service.provider
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
@@ -7,13 +7,14 @@ import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.exchange
+import ru.rsreu.jackal.security.authentication.exception.ExternalAuthenticationException
 
 @Component("yandexAuthenticationProvider")
 class YandexAuthenticationProvider(httpClient: RestTemplate) : ExternalAuthenticationProvider(httpClient) {
     @Value("\${security.oauth.yandex.auth_url}")
     private lateinit var yandexAuthUrl: String
 
-    override val getProviderType: ExternalAuthenticationProviderType = ExternalAuthenticationProviderType.YANDEX
+    override val providerType: ExternalAuthenticationProviderType = ExternalAuthenticationProviderType.YANDEX
 
     override fun getAuthentication(accessToken: String): ExternalAccessTokenAuthentication {
         val yandexAuthResponseNode = performOAuthYandexCodeFlow(
@@ -35,5 +36,5 @@ class YandexAuthenticationProvider(httpClient: RestTemplate) : ExternalAuthentic
     ) = httpClient
         .runCatching {
             exchange<String>(url, HttpMethod.GET, prepareYandexOAuthRequestEntity(accessToken)).getJsonNode()
-        }.onFailure { throw IllegalArgumentException() }.getOrThrow()
+        }.onFailure { throw ExternalAuthenticationException(providerType) }.getOrThrow()
 }

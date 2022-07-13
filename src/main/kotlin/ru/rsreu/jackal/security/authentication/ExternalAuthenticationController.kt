@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 import ru.rsreu.jackal.security.authentication.dto.AuthenticationRequest
 import ru.rsreu.jackal.security.authentication.dto.AuthenticationResponse
 import ru.rsreu.jackal.security.authentication.dto.AuthenticationResponseStatus
+import ru.rsreu.jackal.security.authentication.service.ExternalAuthenticationService
 import ru.rsreu.jackal.security.jwt.JwtTokenProvider
 import ru.rsreu.jackal.security.user.AuthenticationProviderUser
 

@@ -16,6 +16,9 @@ spring:
     url: "jdbc:postgresql://localhost:5432/enterprise-service-db"
     username: "user"
     password: "password"
+springdoc:
+  swagger-ui:
+    url: "openapi.yaml"
 security:
   oauth:
     vk:

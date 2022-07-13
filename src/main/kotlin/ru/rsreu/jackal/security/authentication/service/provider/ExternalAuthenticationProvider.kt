@@ -1,4 +1,4 @@
-package ru.rsreu.jackal.security.authentication.provider
+package ru.rsreu.jackal.security.authentication.service.provider
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate
 abstract class ExternalAuthenticationProvider(
     protected val httpClient: RestTemplate
 ) {
-    abstract val getProviderType: ExternalAuthenticationProviderType
+    abstract val providerType: ExternalAuthenticationProviderType
 
     abstract fun getAuthentication(accessToken: String): ExternalAccessTokenAuthentication
 

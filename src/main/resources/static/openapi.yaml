@@ -1,0 +1,79 @@
+openapi: 3.0.1
+info:
+  title: Jackal-Game Enterprise Service
+  version: v1
+paths:
+  /api/auth/yandex:
+    post:
+      tags:
+        - authentication-controller
+      summary: authenticate user via yandex-api access token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationRequest'
+        required: true
+      responses:
+        '200' :
+          description: "Returns always with 'OK' in responseStatus and not empty accessToken and refreshToken"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationResponse"
+        '401':
+          description: "Returns with error code in responseStatus (YANDEX_PROVIDER_ACCESS_ERROR) if an error occurred when contacting an external provider"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationResponse"
+  /api/auth/vk:
+    post:
+      tags:
+        - authentication-controller
+      summary: authenticate user via vk-api access token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationRequest'
+        required: true
+      responses:
+        '200':
+          description: "Returns always with 'OK' in responseStatus and not empty accessToken and refreshToken"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationResponse"
+        '401':
+          description: "Returns with error code in responseStatus (VK_PROVIDER_ACCESS_ERROR) if an error occurred when contacting an external provider"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationResponse"
+
+components:
+  schemas:
+    AuthenticationRequest:
+      type: object
+      required:
+        - accessToken
+      properties:
+        accessToken:
+          type: string
+          summary: "external access token from yandex or vk"
+    AuthenticationResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          summary: "internal jwt access token"
+        refreshToken:
+          type: string
+          summary: "internal jwt refresh token (on refresh using with access token)"
+        responseStatus:
+          type: string
+          enum:
+            - OK
+            - VK_PROVIDER_ACCESS_ERROR
+            - YANDEX_PROVIDER_ACCESS_ERROR
