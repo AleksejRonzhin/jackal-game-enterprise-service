@@ -8,9 +8,13 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import ru.rsreu.jackal.security.jwt.JwtConfigurer
 
 @EnableWebSecurity
-class SecurityConfiguration {
+class SecurityConfiguration(
+    private val jwtConfigurer: JwtConfigurer,
+    private val authenticationEntryPoint: AuthenticationEntryPoint
+) {
     @Bean
     fun webSecurityCustomizer() = WebSecurityCustomizer {
     }
@@ -22,6 +26,14 @@ class SecurityConfiguration {
             .cors().disable()
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .authorizeRequests {
+                it
+                    .antMatchers("/auth/**", "/refresh/**").permitAll()
+            }
+            .apply(jwtConfigurer)
+            .and()
+            .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
         return http.build()
     }
 
