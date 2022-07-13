@@ -1,4 +1,4 @@
-package ru.rsreu.jackal.security.refresh
+package ru.rsreu.jackal.security.refresh.model
 
 import ru.rsreu.jackal.security.user.AuthenticationProviderUser
 import javax.persistence.*

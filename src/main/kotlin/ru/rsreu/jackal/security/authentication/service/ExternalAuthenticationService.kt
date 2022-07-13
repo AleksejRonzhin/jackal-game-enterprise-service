@@ -7,8 +7,8 @@ import ru.rsreu.jackal.security.authentication.service.provider.ExternalAuthenti
 import ru.rsreu.jackal.security.authentication.service.provider.ExternalAuthenticationProviderType
 import ru.rsreu.jackal.security.user.AuthenticationProviderUser
 import ru.rsreu.jackal.security.user.AuthenticationProviderUserRepository
-import ru.rsreu.jackal.security.refresh.RefreshToken
-import ru.rsreu.jackal.security.refresh.RefreshTokenRepository
+import ru.rsreu.jackal.security.refresh.model.RefreshToken
+import ru.rsreu.jackal.security.refresh.repository.RefreshTokenRepository
 
 @Service
 class ExternalAuthenticationService(
