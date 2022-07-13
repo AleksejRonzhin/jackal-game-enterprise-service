@@ -10,13 +10,15 @@ import ru.rsreu.jackal.security.authentication.dto.AuthenticationResponse
 import ru.rsreu.jackal.security.authentication.dto.AuthenticationResponseStatus
 import ru.rsreu.jackal.security.authentication.service.ExternalAuthenticationService
 import ru.rsreu.jackal.security.jwt.JwtTokenProvider
+import ru.rsreu.jackal.security.refresh.service.RefreshTokenService
 import ru.rsreu.jackal.security.user.AuthenticationProviderUser
+import ru.rsreu.jackal.security.util.TokenGenerationUtil
 
 @RestController
 @RequestMapping("/api/auth")
 class ExternalAuthenticationController(
     private val externalAuthenticationService: ExternalAuthenticationService,
-    private val jwtTokenProvider: JwtTokenProvider
+    private val tokenGenerationUtil: TokenGenerationUtil
 ) {
 
     @PostMapping("/yandex")
@@ -36,9 +38,7 @@ class ExternalAuthenticationController(
     private fun formSuccessAuthenticationResponse(
         authenticationProviderUser: AuthenticationProviderUser
     ): AuthenticationResponse {
-        val accessToken = jwtTokenProvider.createAccessToken(authenticationProviderUser.user)
-        val refreshToken = jwtTokenProvider.createRefreshToken(accessToken)
-        externalAuthenticationService.createRefreshToken(refreshToken, authenticationProviderUser)
+        val (accessToken, refreshToken) = tokenGenerationUtil.generateAccessRefreshPair(authenticationProviderUser)
         return AuthenticationResponse(
             accessToken,
             refreshToken,

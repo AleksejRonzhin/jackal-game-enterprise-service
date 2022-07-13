@@ -9,12 +9,13 @@ import ru.rsreu.jackal.security.user.AuthenticationProviderUser
 import ru.rsreu.jackal.security.user.AuthenticationProviderUserRepository
 import ru.rsreu.jackal.security.refresh.model.RefreshToken
 import ru.rsreu.jackal.security.refresh.repository.RefreshTokenRepository
+import ru.rsreu.jackal.security.refresh.service.RefreshTokenService
 
 @Service
 class ExternalAuthenticationService(
     val authenticationProviderUserRepository: AuthenticationProviderUserRepository,
     val userService: UserService,
-    val refreshTokenRepository: RefreshTokenRepository,
+    val refreshTokenService: RefreshTokenService,
 
     @Qualifier("vkAuthenticationProvider")
     val vkAuthenticationProvider: ExternalAuthenticationProvider,
@@ -59,9 +60,5 @@ class ExternalAuthenticationService(
                 refreshTokens = emptyList()
             )
         )
-    }
-
-    fun createRefreshToken(refreshToken: String, user: AuthenticationProviderUser) {
-        refreshTokenRepository.save(RefreshToken(value = refreshToken, authenticationProviderUser = user))
     }
 }

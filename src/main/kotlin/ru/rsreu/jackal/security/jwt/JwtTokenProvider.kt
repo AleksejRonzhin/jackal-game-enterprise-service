@@ -6,7 +6,6 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import ru.rsreu.jackal.api.models.Permission
 import ru.rsreu.jackal.api.models.User
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -28,9 +27,7 @@ class JwtTokenProvider(
     fun createAccessToken(user: User): String {
         val now = Date()
         return Jwts.builder()
-            .setClaims(
-                formClaims(user.id!!, user.name, user.permissions)
-            )
+            .setClaims(formAccessClaims(user))
             .setIssuedAt(now)
             .setExpiration(Date(now.time + tokenExpiringMilliSeconds))
             .signWith(secretKey)
@@ -38,25 +35,29 @@ class JwtTokenProvider(
             .compact()
     }
 
-    private fun formClaims(id: Long, username: String, permissions: List<Permission>): Claims {
-        val claims = Jwts.claims().setSubject(id.toString())
-        claims["username"] = username
-        if (permissions.isNotEmpty()) {
-            claims["permissions"] = permissions.joinToString { it.toString() }
+    private fun formAccessClaims(user: User): Claims {
+        val claims = Jwts.claims().setSubject(user.id!!.toString())
+        claims["username"] = user.name
+        claims["picture_url"] = user.pictureUrl
+        if (user.permissions.isNotEmpty()) {
+            claims["permissions"] = user.permissions.joinToString { it.toString() }
         }
         return claims
     }
 
-    fun createRefreshToken(accessToken: String): String =
-        Jwts.builder()
-            .setClaims(
-                Jwts.claims().setSubject(accessToken)
-            )
+    fun createRefreshToken(accessToken: String, username: String): String {
+        val claims = Jwts.claims().setSubject(accessToken)
+        claims["username"] = username
+        return Jwts.builder()
+            .setClaims(claims)
             .signWith(secretKey)
             .setHeaderParam("typ", "JWT")
             .compact()
+    }
 
     fun getJwsClaims(jwt: String): Jws<Claims> = jwtParser.parseClaimsJws(jwt)
 
-    fun getJwtFromRefresh(refreshJwt: String): String = getJwsClaims(refreshJwt).body.subject
+    fun getJwtFromRefreshClaims(claims: Jws<Claims>): String = claims.body.subject
+
+    fun getUsernameFromRefreshClaims(claims: Jws<Claims>): String = claims.body["username"].toString()
 }

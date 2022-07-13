@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.ResponseStatus
 import ru.rsreu.jackal.security.authentication.dto.AuthenticationResponse
 import ru.rsreu.jackal.security.authentication.dto.AuthenticationResponseStatus
 import ru.rsreu.jackal.security.authentication.exception.ExternalAuthenticationException
@@ -12,6 +13,7 @@ import ru.rsreu.jackal.security.authentication.service.provider.ExternalAuthenti
 @ControllerAdvice
 class ExternalControllerAdvice {
     @ExceptionHandler(ExternalAuthenticationException::class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     fun handleExternalAuthenticationException(exception: ExternalAuthenticationException) =
         ResponseEntity(
             AuthenticationResponse(

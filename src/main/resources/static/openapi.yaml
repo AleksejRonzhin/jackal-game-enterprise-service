@@ -2,6 +2,9 @@ openapi: 3.0.1
 info:
   title: Jackal-Game Enterprise Service
   version: v1
+servers:
+  - url: http://localhost:8080
+    description: local server url
 paths:
   /api/auth/yandex:
     post:
@@ -16,13 +19,13 @@ paths:
         required: true
       responses:
         '200' :
-          description: "Returns always with 'OK' in responseStatus and not empty accessToken and refreshToken"
+          description: Returns always with 'OK' in responseStatus and not empty accessToken and refreshToken
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AuthenticationResponse"
         '401':
-          description: "Returns with error code in responseStatus (YANDEX_PROVIDER_ACCESS_ERROR) if an error occurred when contacting an external provider"
+          description: Returns with error code in responseStatus (YANDEX_PROVIDER_ACCESS_ERROR) if an error occurred when contacting an external provider
           content:
             application/json:
               schema:
@@ -32,6 +35,7 @@ paths:
       tags:
         - authentication-controller
       summary: authenticate user via vk-api access token
+
       requestBody:
         content:
           application/json:
@@ -40,17 +44,41 @@ paths:
         required: true
       responses:
         '200':
-          description: "Returns always with 'OK' in responseStatus and not empty accessToken and refreshToken"
+          description: Returns always with 'OK' in responseStatus and not empty accessToken and refreshToken
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AuthenticationResponse"
         '401':
-          description: "Returns with error code in responseStatus (VK_PROVIDER_ACCESS_ERROR) if an error occurred when contacting an external provider"
+          description: Returns with error code in responseStatus (VK_PROVIDER_ACCESS_ERROR) if an error occurred when contacting an external provider
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AuthenticationResponse"
+  /api/refresh:
+    post:
+      tags:
+        - refresh-conroller
+      summary: refresh expirated access token by pair access + refresh tokens
+      description: after refreshing a new pair is issued and old refresh token can't be used again
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshRequest"
+        required: true
+      responses:
+        '200':
+          description: Returns always with 'OK' in responseStatus and not empty new pair of accessToken and refreshToken
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RefreshResponse"
+        '401':
+          description: "Returns always with error const in responseStatus and empty new pair of accessToken and refreshToken. 
+          - INVALID_ACCESS_REFRESH_PAIR means that those pair refresh and access wasn't issued on the same time: it can be symbol of system failure (maybe client, maybe server).
+          - ALREADY_USED_REFRESH means that those pair refresh and access was used early. This can be if the refresh was stolen (it is worth reporting this to the client) or if the user has recently pressed the button to log out from all devices.
+          - INVALID_REFRESH means that the refresh was not issued by this service"
 
 components:
   schemas:
@@ -77,3 +105,31 @@ components:
             - OK
             - VK_PROVIDER_ACCESS_ERROR
             - YANDEX_PROVIDER_ACCESS_ERROR
+    RefreshRequest:
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+      properties:
+        accessToken:
+          type: string
+          summary: "expired access token"
+        refreshToken:
+          type: string
+          summary: "refresh token which be issued with expired access"
+    RefreshResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          summary: "internal jwt access token"
+        refreshToken:
+          type: string
+          summary: "internal jwt refresh token (on refresh using with access token)"
+        responseStatus:
+          type: string
+          enum:
+            - OK
+            - INVALID_ACCESS_REFRESH_PAIR
+            - ALREADY_USED_REFRESH
+            - INVALID_REFRESH
