@@ -1,4 +1,4 @@
-package ru.rsreu.jackal.api.models.requests
+package ru.rsreu.jackal.shared_models.requests
 
 data class CreateLobbyRequest(
     val lobbyName: String,
