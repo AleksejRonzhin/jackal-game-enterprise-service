@@ -1,11 +1,10 @@
 package ru.rsreu.jackal
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
 import org.springframework.boot.runApplication
 
-@SpringBootApplication(exclude = [UserDetailsServiceAutoConfiguration::class, SecurityAutoConfiguration::class])
+@SpringBootApplication(exclude = [UserDetailsServiceAutoConfiguration::class])
 class JackalGameEnterpriseServiceApplication
 
 fun main(args: Array<String>) {
