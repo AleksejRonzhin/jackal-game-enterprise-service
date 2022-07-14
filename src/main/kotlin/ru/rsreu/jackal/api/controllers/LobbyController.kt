@@ -21,7 +21,7 @@ class LobbyController(val service: LobbyService) {
         authentication: Authentication): ResponseEntity<PreConnectLobbyResponse> {
         return ResponseEntity.ok(
             service.create(
-                request.lobbyName,
+                request.lobbyTitle,
                 request.lobbyPassword,
                 authentication.principal.toString().toLong()
             )
