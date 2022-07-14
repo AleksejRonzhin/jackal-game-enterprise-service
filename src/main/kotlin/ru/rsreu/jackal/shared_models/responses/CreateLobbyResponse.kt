@@ -6,7 +6,6 @@ import ru.rsreu.jackal.shared_models.WebSocketInfo
 data class CreateLobbyResponse(
     val webSocketInfo: WebSocketInfo,
     val hostToken: String,
-    val lobbySecretKey: String?,
     override val responseStatus: CreateLobbyStatus
 ) : ResponseBody<CreateLobbyStatus>
 

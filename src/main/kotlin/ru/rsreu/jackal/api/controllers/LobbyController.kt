@@ -15,6 +15,6 @@ import ru.rsreu.jackal.shared_models.responses.CreateLobbyResponse
 class LobbyController(val service: LobbyService) {
     @PostMapping("/create")
     fun create(@RequestBody request: CreateLobbyRequest, authentication: Authentication): ResponseEntity<CreateLobbyResponse> {
-        return ResponseEntity.ok(service.create(request, authentication.principal as String))
+        return ResponseEntity.ok(service.create(request, authentication.principal.toString().toLong()))
     }
 }
