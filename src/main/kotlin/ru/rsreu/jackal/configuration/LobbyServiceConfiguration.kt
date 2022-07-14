@@ -9,5 +9,8 @@ data class LobbyServiceConfiguration(
     val lobbyServiceUrl: String,
 
     @Value("\${lobby_service.api.create_lobby_url}")
-    val lobbyCreationUrlPart: String
+    val lobbyCreationUrlPart: String,
+
+    @Value("\${lobby_service.api.pre_connect_lobby_url}")
+    val lobbyPreConnectUrlPart: String
 )

@@ -1,4 +1,3 @@
 package ru.rsreu.jackal.api.controllers.dto
 
-class PreConnectLobbyClientRequest {
-}
+data class PreConnectLobbyClientRequest(val lobbyTitle: String, val lobbyPassword: String?)
