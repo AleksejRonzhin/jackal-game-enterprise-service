@@ -79,6 +79,26 @@ paths:
           - INVALID_ACCESS_REFRESH_PAIR means that those pair refresh and access wasn't issued on the same time: it can be symbol of system failure (maybe client, maybe server).
           - ALREADY_USED_REFRESH means that those pair refresh and access was used early. This can be if the refresh was stolen (it is worth reporting this to the client) or if the user has recently pressed the button to log out from all devices.
           - INVALID_REFRESH means that the refresh was not issued by this service"
+  /api/lobby/create:
+    post:
+      tags:
+        - lobby-controller
+      summary: create lobby
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateLobbyClientRequest"
+        required: true
+      responses:
+        '200':
+          description: If the response status is OK, then the lobby was successfully created and the information for the web-socket connection and host token is returned.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateLobbyResponse"
+
 
 components:
   schemas:
@@ -133,3 +153,32 @@ components:
             - INVALID_ACCESS_REFRESH_PAIR
             - ALREADY_USED_REFRESH
             - INVALID_REFRESH
+    CreateLobbyClientRequest:
+      type: object
+      required:
+        - lobbyName
+      properties:
+        lobbyName:
+          type: string
+          summary: "the name of the lobby being created"
+        lobbyPassword:
+          type: string
+          summary: "If value is null lobby is created public"
+    CreateLobbyResponse:
+      type: object
+      properties:
+        webSocketInfo:
+          type: object
+          properties:
+            subscriptionLobbyUrl:
+              type: string
+            subscriptionUserUrl:
+              type: string
+        hostToken:
+          type: string
+          summary: "lobby token assignment for the lobby creator"
+        responseStatus:
+          type: string
+          enum:
+            - OK
+            - USER_ALREADY_IN_LOBBY
