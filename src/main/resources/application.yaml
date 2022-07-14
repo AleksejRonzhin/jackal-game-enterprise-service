@@ -26,7 +26,7 @@ security:
       auth_url: "https://login.yandex.ru/info?format=json"
   jwt:
     secret: w7sc3prjHPy9bnpENY@==pAV$hA!Skn&
-    expiration-ms: 1000000
+    expiration-ms: 100000000
 
 user:
   default_picture_url: "https://sun9-west.userapi.com/sun9-63/s/v1/ig2/fJ-9qBXk2idaOSI1UN73seplDBp8PQO5e0ekB5y3TDKgjSUB2-08la0r9lnSqc9Xjw12oYaY1BCE3QcCTQCmD0ZJ.jpg?size=1124x1124&quality=95&type=album"
@@ -34,3 +34,4 @@ lobby_service:
   url: "http://localhost:8081/api"
   api:
     create_lobby_url: "/lobby/create"
+    pre_connect_lobby_url: "/lobby/pre-connect"
