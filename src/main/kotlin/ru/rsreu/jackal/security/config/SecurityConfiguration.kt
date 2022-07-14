@@ -30,6 +30,7 @@ class SecurityConfiguration(
             .authorizeRequests {
                 it
                     .antMatchers("/auth/**", "/refresh/**").permitAll()
+                    .antMatchers("/**/lobby/**").authenticated()
             }
             .apply(jwtConfigurer)
             .and()

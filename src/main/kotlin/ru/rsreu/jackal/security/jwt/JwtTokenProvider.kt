@@ -72,7 +72,7 @@ class JwtTokenProvider(
     fun getAuthenticationFromJwt(jwt: String): Authentication {
         val claims = getJwsClaims(jwt).body
         return PreAuthenticatedAuthenticationToken(
-            claims[principalJwtKey],
+            claims.subject,
             jwt,
             formAuthoritiesFromClaim(claims[authorityJwtKey])
         )

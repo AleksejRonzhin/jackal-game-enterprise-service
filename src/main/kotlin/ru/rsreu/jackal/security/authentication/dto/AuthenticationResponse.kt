@@ -1,6 +1,6 @@
 package ru.rsreu.jackal.security.authentication.dto
 
-import ru.rsreu.jackal.model.ResponseBody
+import ru.rsreu.jackal.shared_models.ResponseBody
 
 data class AuthenticationResponse(
     val accessToken: String = "",
