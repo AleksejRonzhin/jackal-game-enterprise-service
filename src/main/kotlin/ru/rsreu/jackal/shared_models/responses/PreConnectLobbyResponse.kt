@@ -10,5 +10,10 @@ data class PreConnectLobbyResponse(
 ) : ResponseBody<PreConnectLobbyStatus>
 
 enum class PreConnectLobbyStatus {
-    OK, USER_ALREADY_IN_LOBBY, LOBBY_NOT_FOUND, WRONG_PASSWORD, USER_IN_LOBBY_BLACK_LIST, NOT_UNIQUE_LOBBY_TITLE
+    OK,
+    USER_ALREADY_IN_LOBBY,
+    LOBBY_NOT_FOUND,
+    WRONG_PASSWORD,
+    USER_IN_LOBBY_BLACK_LIST,
+    NOT_UNIQUE_LOBBY_TITLE
 }

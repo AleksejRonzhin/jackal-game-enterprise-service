@@ -30,6 +30,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AuthenticationResponse"
+
   /api/auth/vk:
     post:
       tags:
@@ -55,6 +56,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AuthenticationResponse"
+
   /api/refresh:
     post:
       tags:
@@ -79,6 +81,7 @@ paths:
           - INVALID_ACCESS_REFRESH_PAIR means that those pair refresh and access wasn't issued on the same time: it can be symbol of system failure (maybe client, maybe server).
           - ALREADY_USED_REFRESH means that those pair refresh and access was used early. This can be if the refresh was stolen (it is worth reporting this to the client) or if the user has recently pressed the button to log out from all devices.
           - INVALID_REFRESH means that the refresh was not issued by this service"
+
   /api/lobby/create:
     post:
       tags:
@@ -93,11 +96,31 @@ paths:
         required: true
       responses:
         '200':
-          description: If the response status is OK, then the lobby was successfully created and the information for the web-socket connection and host token is returned.
+          description: If the response status is OK, then the lobby was successfully created and the information for the web-socket connection and host token are returned.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreateLobbyResponse"
+                $ref: "#/components/schemas/PreConnectLobbyResponse"
+
+  /api/lobby/pre-connect:
+    post:
+      tags:
+        - lobby-controller
+      summary: join to lobby and get information for web socket connection
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PreConnectLobbyClientRequest"
+        required: true
+      responses:
+        '200':
+          description: If the response status is OK, then user was successfully joined to lobby. The information for the web-socket connection and user token are returned.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PreConnectLobbyResponse"
 
 
 components:
@@ -153,18 +176,20 @@ components:
             - INVALID_ACCESS_REFRESH_PAIR
             - ALREADY_USED_REFRESH
             - INVALID_REFRESH
+
     CreateLobbyClientRequest:
       type: object
       required:
-        - lobbyName
+        - lobbyTitle
       properties:
-        lobbyName:
+        lobbyTitle:
           type: string
-          summary: "the name of the lobby being created"
+          summary: "the title of the lobby being created"
         lobbyPassword:
           type: string
           summary: "If value is null lobby is created public"
-    CreateLobbyResponse:
+
+    PreConnectLobbyResponse:
       type: object
       properties:
         webSocketInfo:
@@ -174,11 +199,26 @@ components:
               type: string
             subscriptionUserUrl:
               type: string
-        hostToken:
+        userToken:
           type: string
-          summary: "lobby token assignment for the lobby creator"
+          summary: "Token is used to identify the user in the lobby service. Stores user id and lobby id"
         responseStatus:
           type: string
           enum:
             - OK
             - USER_ALREADY_IN_LOBBY
+            - LOBBY_NOT_FOUND
+            - WRONG_PASSWORD
+            - USER_IN_LOBBY_BLACK_LIST
+            - NOT_UNIQUE_LOBBY_TITLE
+
+    PreConnectLobbyClientRequest:
+      type: object
+      required:
+        - lobbyTitle
+      properties:
+        lobbyTitle:
+          type: string
+        lobbyPassword:
+          type: string
+          summary: "if the lobby is public no password is needed"
