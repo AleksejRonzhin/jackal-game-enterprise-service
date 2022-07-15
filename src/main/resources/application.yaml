@@ -35,3 +35,4 @@ lobby_service:
   api:
     create_lobby_url: "/lobby/create"
     pre_connect_lobby_url: "/lobby/pre-connect"
+    reconnect_lobby_url: "/lobby/reconnect"
