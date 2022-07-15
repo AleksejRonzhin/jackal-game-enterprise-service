@@ -100,9 +100,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PreConnectLobbyResponse"
+                $ref: "#/components/schemas/CreateLobbyResponse"
 
-  /api/lobby/pre-connect:
+  /api/lobby/join:
     post:
       tags:
         - lobby-controller
@@ -112,7 +112,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PreConnectLobbyClientRequest"
+              $ref: "#/components/schemas/JoinLobbyClientRequest"
         required: true
       responses:
         '200':
@@ -120,8 +120,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PreConnectLobbyResponse"
+                $ref: "#/components/schemas/JoinLobbyResponse"
 
+  /api/lobby/connection-info:
+    get:
+      tags:
+        - lobby-controller
+      summary: get info about web socket connection for reconnect
+
+      responses:
+        '200':
+          description: If the response status is OK, the information for the web-socket connection and user token are returned.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetLobbyConnectionInfoResponse"
 
 components:
   schemas:
@@ -133,6 +146,7 @@ components:
         accessToken:
           type: string
           summary: "external access token from yandex or vk"
+
     AuthenticationResponse:
       type: object
       properties:
@@ -148,6 +162,7 @@ components:
             - OK
             - VK_PROVIDER_ACCESS_ERROR
             - YANDEX_PROVIDER_ACCESS_ERROR
+            -
     RefreshRequest:
       type: object
       required:
@@ -160,6 +175,7 @@ components:
         refreshToken:
           type: string
           summary: "refresh token which be issued with expired access"
+
     RefreshResponse:
       type: object
       properties:
@@ -189,7 +205,38 @@ components:
           type: string
           summary: "If value is null lobby is created public"
 
-    PreConnectLobbyResponse:
+    CreateLobbyResponse:
+      type: object
+      properties:
+        webSocketInfo:
+          type: object
+          properties:
+            subscriptionLobbyUrl:
+              type: string
+            subscriptionUserUrl:
+              type: string
+        userToken:
+          type: string
+          summary: "Token is used to identify the user in the lobby service. Stores user id and lobby id"
+        responseStatus:
+          type: string
+          enum:
+            - OK
+            - HOST_ALREADY_IN_LOBBY
+            - NOT_UNIQUE_LOBBY_TITLE
+
+    JoinLobbyClientRequest:
+      type: object
+      required:
+        - lobbyTitle
+      properties:
+        lobbyTitle:
+          type: string
+        lobbyPassword:
+          type: string
+          summary: "if the lobby is public no password is needed"
+
+    JoinLobbyResponse:
       type: object
       properties:
         webSocketInfo:
@@ -210,15 +257,22 @@ components:
             - LOBBY_NOT_FOUND
             - WRONG_PASSWORD
             - USER_IN_LOBBY_BLACK_LIST
-            - NOT_UNIQUE_LOBBY_TITLE
 
-    PreConnectLobbyClientRequest:
+    GetLobbyConnectionInfoResponse:
       type: object
-      required:
-        - lobbyTitle
       properties:
-        lobbyTitle:
+        webSocketInfo:
+          type: object
+          properties:
+            subscriptionLobbyUrl:
+              type: string
+            subscriptionUserUrl:
+              type: string
+        userToken:
           type: string
-        lobbyPassword:
+          summary: "Token is used to identify the user in the lobby service. Stores user id and lobby id"
+        responseStatus:
           type: string
-          summary: "if the lobby is public no password is needed"
+          enum:
+            - OK
+            - USER_NOT_IN_ANY_LOBBY

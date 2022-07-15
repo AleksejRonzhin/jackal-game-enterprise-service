@@ -34,5 +34,5 @@ lobby_service:
   url: "http://localhost:8081/api"
   api:
     create_lobby_url: "/lobby/create"
-    pre_connect_lobby_url: "/lobby/pre-connect"
-    reconnect_lobby_url: "/lobby/reconnect"
+    join_lobby_url: "/lobby/join"
+    connection_info_url: "/lobby/connection-info"
