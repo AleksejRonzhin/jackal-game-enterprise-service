@@ -7,6 +7,7 @@ import org.springframework.web.client.postForEntity
 import ru.rsreu.jackal.configuration.LobbyServiceConfiguration
 import ru.rsreu.jackal.shared_models.requests.CreateLobbyRequest
 import ru.rsreu.jackal.shared_models.requests.JoinLobbyRequest
+import ru.rsreu.jackal.shared_models.responses.ChangeGameResponse
 import ru.rsreu.jackal.shared_models.responses.CreateLobbyResponse
 import ru.rsreu.jackal.shared_models.responses.GetLobbyConnectionInfoResponse
 import ru.rsreu.jackal.shared_models.responses.JoinLobbyResponse
@@ -29,4 +30,9 @@ class LobbyService(
     fun getInfoAboutSocketConnection(userId: Long) = restTemplate.getForEntity<GetLobbyConnectionInfoResponse>(
         lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.lobbyConnectionInfoUrlPart + "/userId=${userId}"
     ).body
+
+    fun changeGame(userId: Long, gameId: Long): ChangeGameResponse? {
+
+        return null
+    }
 }
