@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*
 import ru.rsreu.jackal.api.lobby.dto.CreateLobbyClientRequest
 import ru.rsreu.jackal.api.lobby.dto.JoinLobbyClientRequest
 import ru.rsreu.jackal.api.game.service.GameService
+import ru.rsreu.jackal.api.lobby.dto.GetAllLobbyInfoClientResponse
+import ru.rsreu.jackal.api.lobby.dto.GetAllLobbyInfoClientStatus
 import ru.rsreu.jackal.api.lobby.service.LobbyService
 import ru.rsreu.jackal.shared_models.requests.ChangeGameClientRequest
 import ru.rsreu.jackal.shared_models.responses.ChangeGameResponse
@@ -53,5 +55,11 @@ class LobbyController(val lobbyService: LobbyService, val gameService: GameServi
         val gameId = request.gameId
         gameService.checkGameIsExistsOrThrow(gameId)
         return ResponseEntity.ok(lobbyService.changeGame(gameId, authentication.principal.toString().toLong()))
+    }
+
+    @GetMapping("/all")
+    fun getAllLobbyInfo(): ResponseEntity<GetAllLobbyInfoClientResponse> {
+        val lobbiesInfo = lobbyService.getClientLobbiesInfo()
+        return ResponseEntity.ok(GetAllLobbyInfoClientResponse(lobbiesInfo, GetAllLobbyInfoClientStatus.OK))
     }
 }
