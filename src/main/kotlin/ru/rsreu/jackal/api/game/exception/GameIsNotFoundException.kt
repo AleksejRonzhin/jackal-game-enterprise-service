@@ -1,3 +1,3 @@
-package ru.rsreu.jackal.api.exceptions
+package ru.rsreu.jackal.api.game.exception
 
 class GameIsNotFoundException : RuntimeException()

@@ -1,12 +1,12 @@
-package ru.rsreu.jackal.api.controllers
+package ru.rsreu.jackal.api.lobby.controller
 
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
-import ru.rsreu.jackal.api.controllers.dto.CreateLobbyClientRequest
-import ru.rsreu.jackal.api.controllers.dto.JoinLobbyClientRequest
-import ru.rsreu.jackal.api.services.GameService
-import ru.rsreu.jackal.api.services.LobbyService
+import ru.rsreu.jackal.api.lobby.dto.CreateLobbyClientRequest
+import ru.rsreu.jackal.api.lobby.dto.JoinLobbyClientRequest
+import ru.rsreu.jackal.api.game.service.GameService
+import ru.rsreu.jackal.api.lobby.service.LobbyService
 import ru.rsreu.jackal.shared_models.requests.ChangeGameClientRequest
 import ru.rsreu.jackal.shared_models.responses.ChangeGameResponse
 import ru.rsreu.jackal.shared_models.responses.CreateLobbyResponse

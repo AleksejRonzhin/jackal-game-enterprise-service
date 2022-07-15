@@ -18,7 +18,7 @@ paths:
               $ref: '#/components/schemas/AuthenticationRequest'
         required: true
       responses:
-        '200' :
+        '200':
           description: Returns always with 'OK' in responseStatus and not empty accessToken and refreshToken
           content:
             application/json:
@@ -135,6 +135,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetLobbyConnectionInfoResponse"
+
+  /api/user/info?userId={userId}:
+    get:
+      tags:
+        - user-controller
+      summary: get info about user by user id
+      parameters:
+        - name: userId
+          in: path
+          required: true
+      responses:
+        '200':
+          description: If the response status is OK, the information about user is returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserInfoResponse"
+
 
 components:
   schemas:
@@ -276,3 +294,16 @@ components:
           enum:
             - OK
             - USER_NOT_IN_ANY_LOBBY
+
+    GetUserInfoResponse:
+      type: object
+      properties:
+        userName:
+          type: string
+        userPictureUrl:
+          type: string
+        responseStatus:
+          type: string
+          enum:
+            - OK
+            - USER_NOT_FOUND

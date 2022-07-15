@@ -2,13 +2,11 @@ package ru.rsreu.jackal.security.authentication.service
 
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import ru.rsreu.jackal.api.services.UserService
+import ru.rsreu.jackal.api.user.service.UserService
 import ru.rsreu.jackal.security.authentication.service.provider.ExternalAuthenticationProvider
 import ru.rsreu.jackal.security.authentication.service.provider.ExternalAuthenticationProviderType
 import ru.rsreu.jackal.security.user.AuthenticationProviderUser
 import ru.rsreu.jackal.security.user.AuthenticationProviderUserRepository
-import ru.rsreu.jackal.security.refresh.model.RefreshToken
-import ru.rsreu.jackal.security.refresh.repository.RefreshTokenRepository
 import ru.rsreu.jackal.security.refresh.service.RefreshTokenService
 
 @Service

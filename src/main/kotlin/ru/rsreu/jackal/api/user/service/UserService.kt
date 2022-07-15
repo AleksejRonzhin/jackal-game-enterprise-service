@@ -1,10 +1,11 @@
-package ru.rsreu.jackal.api.services
+package ru.rsreu.jackal.api.user.service
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import ru.rsreu.jackal.api.models.Permission
-import ru.rsreu.jackal.api.models.User
-import ru.rsreu.jackal.api.repositories.UserRepository
+import ru.rsreu.jackal.api.user.Permission
+import ru.rsreu.jackal.api.user.User
+import ru.rsreu.jackal.api.user.exception.UserNotFoundException
+import ru.rsreu.jackal.api.user.repository.UserRepository
 
 @Service
 class UserService(private val repo: UserRepository) {
@@ -21,4 +22,6 @@ class UserService(private val repo: UserRepository) {
             )
         )
     }
+
+    fun getUserByIdOrThrow(userId: Long): User = repo.findById(userId).orElseThrow { throw UserNotFoundException() }
 }

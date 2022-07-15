@@ -10,7 +10,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import org.springframework.stereotype.Component
-import ru.rsreu.jackal.api.models.User
+import ru.rsreu.jackal.api.user.User
 import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.crypto.SecretKey

@@ -1,4 +1,4 @@
-package ru.rsreu.jackal.api.services
+package ru.rsreu.jackal.api.lobby.service
 
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate

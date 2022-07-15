@@ -1,4 +1,4 @@
-package ru.rsreu.jackal.api.models
+package ru.rsreu.jackal.api.game
 
 import javax.persistence.*
 
