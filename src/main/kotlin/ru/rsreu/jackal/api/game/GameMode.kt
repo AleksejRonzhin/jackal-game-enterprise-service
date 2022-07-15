@@ -12,5 +12,7 @@ class GameMode(
     @ManyToOne
     val game: Game,
 
-    val title: String
+    val title: String,
+
+    val maxPlayerNumber: Int
 )

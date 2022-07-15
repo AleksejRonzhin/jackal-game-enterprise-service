@@ -6,12 +6,12 @@ import javax.persistence.*
 @Table(name = "games", schema = "public")
 class Game(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long? = null,
+
+    val title: String,
 
     val serviceAddress: String,
 
-    val clientAddress: String,
-
-    val maxPLayerNumber: Int
+    val clientAddress: String
 )
