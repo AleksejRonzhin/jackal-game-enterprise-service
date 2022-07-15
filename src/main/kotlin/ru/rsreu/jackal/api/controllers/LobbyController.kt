@@ -4,10 +4,11 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import ru.rsreu.jackal.api.controllers.dto.CreateLobbyClientRequest
-import ru.rsreu.jackal.api.controllers.dto.PreConnectLobbyClientRequest
+import ru.rsreu.jackal.api.controllers.dto.JoinLobbyClientRequest
 import ru.rsreu.jackal.api.services.LobbyService
-import ru.rsreu.jackal.shared_models.responses.PreConnectLobbyResponse
-import ru.rsreu.jackal.shared_models.responses.ReconnectLobbyResponse
+import ru.rsreu.jackal.shared_models.responses.CreateLobbyResponse
+import ru.rsreu.jackal.shared_models.responses.GetLobbyConnectionInfoResponse
+import ru.rsreu.jackal.shared_models.responses.JoinLobbyResponse
 
 
 @RestController
@@ -16,7 +17,7 @@ class LobbyController(val service: LobbyService) {
     @PostMapping("/create")
     fun create(
         @RequestBody request: CreateLobbyClientRequest, authentication: Authentication
-    ): ResponseEntity<PreConnectLobbyResponse> {
+    ): ResponseEntity<CreateLobbyResponse> {
         return ResponseEntity.ok(
             service.create(
                 request.lobbyTitle, request.lobbyPassword, authentication.principal.toString().toLong()
@@ -24,21 +25,21 @@ class LobbyController(val service: LobbyService) {
         )
     }
 
-    @PostMapping("/pre-connect")
-    fun preConnect(
-        @RequestBody request: PreConnectLobbyClientRequest, authentication: Authentication
-    ): ResponseEntity<PreConnectLobbyResponse> {
+    @PostMapping("/join")
+    fun join(
+        @RequestBody request: JoinLobbyClientRequest, authentication: Authentication
+    ): ResponseEntity<JoinLobbyResponse> {
         return ResponseEntity.ok(
-            service.preConnect(
+            service.join(
                 request.lobbyTitle, request.lobbyPassword, authentication.principal.toString().toLong()
             )
         )
     }
 
-    @GetMapping("/reconnect")
-    fun reconnect(authentication: Authentication): ResponseEntity<ReconnectLobbyResponse> {
+    @GetMapping("/connection-info")
+    fun getInfoAboutConnection(authentication: Authentication): ResponseEntity<GetLobbyConnectionInfoResponse> {
         return ResponseEntity.ok(
-            service.reconnect(authentication.principal.toString().toLong())
+            service.getInfoAboutSocketConnection(authentication.principal.toString().toLong())
         )
     }
 }

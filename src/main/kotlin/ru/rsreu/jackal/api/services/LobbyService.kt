@@ -4,29 +4,29 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForEntity
 import org.springframework.web.client.postForEntity
-import ru.rsreu.jackal.api.controllers.dto.PreConnectLobbyServiceRequest
 import ru.rsreu.jackal.configuration.LobbyServiceConfiguration
-import ru.rsreu.jackal.shared_models.requests.CreateLobbyServiceRequest
-import ru.rsreu.jackal.shared_models.responses.PreConnectLobbyResponse
-import ru.rsreu.jackal.shared_models.responses.ReconnectLobbyResponse
+import ru.rsreu.jackal.shared_models.requests.CreateLobbyRequest
+import ru.rsreu.jackal.shared_models.requests.JoinLobbyRequest
+import ru.rsreu.jackal.shared_models.responses.CreateLobbyResponse
+import ru.rsreu.jackal.shared_models.responses.GetLobbyConnectionInfoResponse
+import ru.rsreu.jackal.shared_models.responses.JoinLobbyResponse
 
 @Service
 class LobbyService(
     val restTemplate: RestTemplate, val lobbyServiceConfiguration: LobbyServiceConfiguration
 ) {
     fun create(lobbyName: String, lobbyPassword: String?, hostId: Long) =
-        restTemplate.postForEntity<PreConnectLobbyResponse>(
+        restTemplate.postForEntity<CreateLobbyResponse>(
             lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.lobbyCreationUrlPart,
-            CreateLobbyServiceRequest(lobbyName, lobbyPassword, hostId)
+            CreateLobbyRequest(lobbyName, lobbyPassword, hostId)
         ).body
 
-    fun preConnect(lobbyTitle: String, lobbyPassword: String?, userId: Long) =
-        restTemplate.postForEntity<PreConnectLobbyResponse>(
-            lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.lobbyPreConnectUrlPart,
-            PreConnectLobbyServiceRequest(lobbyTitle, lobbyPassword, userId)
-        ).body
+    fun join(lobbyTitle: String, lobbyPassword: String?, userId: Long) = restTemplate.postForEntity<JoinLobbyResponse>(
+        lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.lobbyJoinUrlPart,
+        JoinLobbyRequest(lobbyTitle, lobbyPassword, userId)
+    ).body
 
-    fun reconnect(userId: Long) = restTemplate.getForEntity<ReconnectLobbyResponse>(
-        lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.lobbyReconnectUrlPart + "/userId=${userId}"
+    fun getInfoAboutSocketConnection(userId: Long) = restTemplate.getForEntity<GetLobbyConnectionInfoResponse>(
+        lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.lobbyConnectionInfoUrlPart + "/userId=${userId}"
     ).body
 }
