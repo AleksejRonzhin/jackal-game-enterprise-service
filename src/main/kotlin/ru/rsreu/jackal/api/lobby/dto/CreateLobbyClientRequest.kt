@@ -1,4 +1,4 @@
-package ru.rsreu.jackal.api.controllers.dto
+package ru.rsreu.jackal.api.lobby.dto
 
 data class CreateLobbyClientRequest(
     val lobbyTitle: String,
