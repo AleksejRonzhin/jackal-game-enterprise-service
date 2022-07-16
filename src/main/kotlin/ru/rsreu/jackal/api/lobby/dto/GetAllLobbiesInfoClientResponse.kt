@@ -2,7 +2,7 @@ package ru.rsreu.jackal.api.lobby.dto
 
 import ru.rsreu.jackal.shared_models.ResponseBody
 
-data class GetAllLobbyInfoClientResponse(
+data class GetAllLobbiesInfoClientResponse(
     val lobbiesInfo: Collection<ClientLobbyInfo>,
     override val responseStatus: GetAllLobbyInfoClientStatus
 ): ResponseBody<GetAllLobbyInfoClientStatus>
