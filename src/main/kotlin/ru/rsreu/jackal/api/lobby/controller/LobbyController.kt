@@ -3,13 +3,10 @@ package ru.rsreu.jackal.api.lobby.controller
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
-import ru.rsreu.jackal.api.lobby.dto.CreateLobbyClientRequest
-import ru.rsreu.jackal.api.lobby.dto.JoinLobbyClientRequest
+import ru.rsreu.jackal.api.TransformResponseService
 import ru.rsreu.jackal.api.game.service.GameService
-import ru.rsreu.jackal.api.lobby.dto.GetAllLobbyInfoClientResponse
-import ru.rsreu.jackal.api.lobby.dto.GetAllLobbyInfoClientStatus
+import ru.rsreu.jackal.api.lobby.dto.*
 import ru.rsreu.jackal.api.lobby.service.LobbyService
-import ru.rsreu.jackal.shared_models.requests.ChangeGameClientRequest
 import ru.rsreu.jackal.shared_models.responses.ChangeGameResponse
 import ru.rsreu.jackal.shared_models.responses.CreateLobbyResponse
 import ru.rsreu.jackal.shared_models.responses.GetLobbyConnectionInfoResponse
@@ -18,7 +15,9 @@ import ru.rsreu.jackal.shared_models.responses.JoinLobbyResponse
 
 @RestController
 @RequestMapping("/api/lobby")
-class LobbyController(val lobbyService: LobbyService, val gameService: GameService) {
+class LobbyController(
+    val lobbyService: LobbyService, val transformResponseService: TransformResponseService, val gameService: GameService
+) {
     @PostMapping("/create")
     fun create(
         @RequestBody request: CreateLobbyClientRequest, authentication: Authentication
@@ -59,7 +58,13 @@ class LobbyController(val lobbyService: LobbyService, val gameService: GameServi
 
     @GetMapping("/all")
     fun getAllLobbyInfo(): ResponseEntity<GetAllLobbyInfoClientResponse> {
-        val lobbiesInfo = lobbyService.getClientLobbiesInfo()
-        return ResponseEntity.ok(GetAllLobbyInfoClientResponse(lobbiesInfo, GetAllLobbyInfoClientStatus.OK))
+        val lobbies = lobbyService.getClientLobbiesInfo()
+        return ResponseEntity.ok(
+            GetAllLobbyInfoClientResponse(
+                transformResponseService.transformLobbiesForClient(
+                    lobbies
+                ), GetAllLobbyInfoClientStatus.OK
+            )
+        )
     }
 }

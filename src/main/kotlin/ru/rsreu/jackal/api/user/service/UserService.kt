@@ -6,6 +6,7 @@ import ru.rsreu.jackal.api.user.Permission
 import ru.rsreu.jackal.api.user.User
 import ru.rsreu.jackal.api.user.exception.UserNotFoundException
 import ru.rsreu.jackal.api.user.repository.UserRepository
+import java.util.Optional
 
 @Service
 class UserService(private val repo: UserRepository) {
@@ -24,4 +25,6 @@ class UserService(private val repo: UserRepository) {
     }
 
     fun getUserByIdOrThrow(userId: Long): User = repo.findById(userId).orElseThrow { throw UserNotFoundException() }
+
+    fun getUserById(userId: Long): Optional<User> = repo.findById(userId)
 }

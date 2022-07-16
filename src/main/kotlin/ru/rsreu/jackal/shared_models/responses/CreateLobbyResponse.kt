@@ -4,9 +4,7 @@ import ru.rsreu.jackal.shared_models.ResponseBody
 import ru.rsreu.jackal.shared_models.WebSocketInfo
 
 data class CreateLobbyResponse(
-    val webSocketInfo: WebSocketInfo? = null,
-    val token: String? = null,
-    override val responseStatus: CreateLobbyStatus
+    val webSocketInfo: WebSocketInfo? = null, val token: String? = null, override val responseStatus: CreateLobbyStatus
 ) : ResponseBody<CreateLobbyStatus>
 
 enum class CreateLobbyStatus {
