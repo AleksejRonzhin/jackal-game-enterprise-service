@@ -13,5 +13,7 @@ data class LobbyServiceConfiguration(
 
     @Value("\${lobby_service.api.connection_info_url}") val lobbyConnectionInfoUrlPart: String,
 
-    @Value("\${lobby_service.api.get_all_lobbies}") val getAllLobbiesUrlPart: String
+    @Value("\${lobby_service.api.get_all_lobbies}") val getAllLobbiesUrlPart: String,
+
+    @Value("\${lobby_service.api.change_game}") val changeGameUrlPart: String,
 )

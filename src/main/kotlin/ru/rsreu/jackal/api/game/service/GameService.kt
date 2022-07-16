@@ -5,32 +5,29 @@ import ru.rsreu.jackal.api.game.Game
 import ru.rsreu.jackal.api.game.GameMode
 import ru.rsreu.jackal.api.game.dto.GameInfo
 import ru.rsreu.jackal.api.game.dto.GameModeInfo
-import ru.rsreu.jackal.api.game.exception.GameNotFoundException
+import ru.rsreu.jackal.api.game.exception.GameModeNotFoundException
 import ru.rsreu.jackal.api.game.repository.GameModeRepository
 import ru.rsreu.jackal.api.game.repository.GameRepository
 
 @Service
 class GameService(private val gameRepository: GameRepository, private val gameModeRepository: GameModeRepository) {
-    fun checkGameIsExistsOrThrow(gameId: Long) {
-        if (gameRepository.existsById(gameId)) {
-            throw GameNotFoundException()
+    fun checkGameIsExistsOrThrow(gameModeId: Long) {
+        if (!gameModeRepository.existsById(gameModeId)) {
+            throw GameModeNotFoundException()
         }
     }
 
-    fun getByIdOrThrow(gameId: Long): GameMode =
-        gameModeRepository.findById(gameId).orElseThrow { GameNotFoundException() }
+    fun getGameModeByIdOrThrow(gameModeId: Long): GameMode? {
+        return gameModeRepository.findById(gameModeId).orElse(null)
+    }
 
-    fun registerGame(title: String, serviceAddress: String, clientAddress: String, modes: List<GameModeInfo>) {
+    fun registerGame(title: String, serviceAddress: String, clientAddress: String, modes: Collection<GameModeInfo>) {
         val game = Game(title = title, serviceAddress = serviceAddress, clientAddress = clientAddress)
-        // TODO added modes
         gameRepository.save(game)
+        modes.forEach {
+            gameModeRepository.save(GameMode(game = game, title = it.title, maxPlayerNumber = it.maxPlayerNumber))
+        }
     }
 
-    fun getAllGameInfo(): List<GameInfo> = gameRepository.findAll().map { transformGameToGameInfo(it) }
-
-    private fun transformGameToGameInfo(game: Game): GameInfo {
-        val modesInfo = listOf<GameModeInfo>()
-        // TODO get modes
-        return GameInfo(game.id!!, game.title, modesInfo)
-    }
+    fun getAllGameInfo(): MutableIterable<Game> = gameRepository.findAll()
 }

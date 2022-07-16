@@ -4,11 +4,10 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForEntity
 import org.springframework.web.client.postForEntity
-import ru.rsreu.jackal.api.lobby.dto.ClientLobbyInfo
-import ru.rsreu.jackal.api.lobby.dto.ClientLobbyMemberInfo
+import ru.rsreu.jackal.api.lobby.dto.ChangeGameClientRequest
 import ru.rsreu.jackal.configuration.LobbyServiceConfiguration
 import ru.rsreu.jackal.shared_models.LobbyInfo
-import ru.rsreu.jackal.shared_models.LobbyMemberInfo
+import ru.rsreu.jackal.shared_models.requests.ChangeGameRequest
 import ru.rsreu.jackal.shared_models.requests.CreateLobbyRequest
 import ru.rsreu.jackal.shared_models.requests.JoinLobbyRequest
 import ru.rsreu.jackal.shared_models.responses.*
@@ -32,12 +31,13 @@ class LobbyService(
         lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.lobbyConnectionInfoUrlPart + "/userId=${userId}"
     ).body
 
-    fun changeGame(userId: Long, gameId: Long): ChangeGameResponse? {
-        return null
-    }
+    fun changeGame(userId: Long, gameModeId: Long): ChangeGameResponse? =
+        restTemplate.postForEntity<ChangeGameResponse>(
+            lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.changeGameUrlPart,
+            ChangeGameRequest(gameModeId, userId)
+        ).body
 
-    fun getClientLobbiesInfo(): Collection<LobbyInfo> =
-        restTemplate.getForEntity<GetAllLobbiesResponse>(
-            lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.getAllLobbiesUrlPart
-        ).body!!.lobbies
+    fun getClientLobbiesInfo(): Collection<LobbyInfo> = restTemplate.getForEntity<GetAllLobbiesResponse>(
+        lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.getAllLobbiesUrlPart
+    ).body!!.lobbies
 }

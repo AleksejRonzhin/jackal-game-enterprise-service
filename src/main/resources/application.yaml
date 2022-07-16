@@ -37,3 +37,4 @@ lobby_service:
     join_lobby_url: "/lobby/join"
     connection_info_url: "/lobby/connection-info"
     get_all_lobbies: "/lobby/all"
+    change_game: "/lobby/change-game"

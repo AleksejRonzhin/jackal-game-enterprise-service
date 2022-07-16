@@ -4,5 +4,5 @@ data class RegisterGameRequest(
     val title: String,
     val serviceAddress: String,
     val clientAddress: String,
-    val modes: List<GameModeInfo>
+    val modes: Collection<GameModeInfo>
 )

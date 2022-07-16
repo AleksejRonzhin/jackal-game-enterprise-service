@@ -51,9 +51,9 @@ class LobbyController(
     fun changeGame(
         @RequestBody request: ChangeGameClientRequest, authentication: Authentication
     ): ResponseEntity<ChangeGameResponse> {
-        val gameId = request.gameId
-        gameService.checkGameIsExistsOrThrow(gameId)
-        return ResponseEntity.ok(lobbyService.changeGame(gameId, authentication.principal.toString().toLong()))
+        val gameModeId = request.gameModeId
+        gameService.checkGameIsExistsOrThrow(gameModeId)
+        return ResponseEntity.ok(lobbyService.changeGame(gameModeId, authentication.principal.toString().toLong()))
     }
 
     @GetMapping("/all")
