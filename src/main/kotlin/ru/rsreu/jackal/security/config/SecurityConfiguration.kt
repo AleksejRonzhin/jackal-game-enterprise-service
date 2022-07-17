@@ -23,7 +23,8 @@ class SecurityConfiguration(
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .httpBasic().disable()
-            .cors().disable()
+            .cors()
+            .and()
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
@@ -41,7 +42,10 @@ class SecurityConfiguration(
     @Bean
     fun corsConfigurer(): WebMvcConfigurer = object : WebMvcConfigurer {
         override fun addCorsMappings(registry: CorsRegistry) {
-            registry.addMapping("/**").allowedOrigins("*").allowedMethods("*")
+            registry
+                .addMapping("/**")
+                .allowedOriginPatterns("*")
+                .allowedMethods("*")
         }
     }
 }
