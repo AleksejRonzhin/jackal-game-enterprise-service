@@ -15,7 +15,9 @@ import ru.rsreu.jackal.shared_models.LobbyMemberInfo
 
 @Service
 class TransformResponseService(
-    val gameService: GameService, val userService: UserService, val gameModeRepository: GameModeRepository
+    private val gameService: GameService,
+    private val userService: UserService,
+    private val gameModeRepository: GameModeRepository
 ) {
 
     fun transformLobbiesForClient(lobbies: Collection<LobbyInfo>): Collection<ClientLobbyInfo> =
@@ -24,7 +26,7 @@ class TransformResponseService(
     private fun transformLobbyToClientLobby(lobbyInfo: LobbyInfo): ClientLobbyInfo {
         var gameMode: GameMode? = null
         if (lobbyInfo.gameId != null) {
-            gameMode = gameService.getGameModeByIdOrThrow(lobbyInfo.gameId)
+            gameMode = gameService.getGameModeByIdOrNull(lobbyInfo.gameId)
         }
         return ClientLobbyInfo(
             lobbyInfo.title,
@@ -52,7 +54,7 @@ class TransformResponseService(
 
     private fun transformGameToGameInfo(game: Game): GameInfo {
         val gameModes = gameModeRepository.getByGame(game)
-        val modesInfo = gameModes.map { GameModeInfo(it.title, it.maxPlayerNumber) }
+        val modesInfo = gameModes.map { GameModeInfo(it.id, it.title, it.maxPlayerNumber, it.minPlayerNumber) }
         return GameInfo(game.id!!, game.title, modesInfo)
     }
 }

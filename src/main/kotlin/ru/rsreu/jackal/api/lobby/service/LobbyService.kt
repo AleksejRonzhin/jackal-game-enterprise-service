@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForEntity
 import org.springframework.web.client.postForEntity
-import ru.rsreu.jackal.api.lobby.dto.ChangeGameClientRequest
 import ru.rsreu.jackal.configuration.LobbyServiceConfiguration
 import ru.rsreu.jackal.shared_models.LobbyInfo
 import ru.rsreu.jackal.shared_models.requests.ChangeGameRequest
@@ -31,7 +30,7 @@ class LobbyService(
         lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.lobbyConnectionInfoUrlPart + "/userId=${userId}"
     ).body
 
-    fun changeGame(userId: Long, gameModeId: Long): ChangeGameResponse? =
+    fun changeGame(gameModeId: Long, userId: Long): ChangeGameResponse? =
         restTemplate.postForEntity<ChangeGameResponse>(
             lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.changeGameUrlPart,
             ChangeGameRequest(gameModeId, userId)

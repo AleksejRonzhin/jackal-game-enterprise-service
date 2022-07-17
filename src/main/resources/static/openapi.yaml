@@ -309,7 +309,6 @@ components:
             - OK
             - USER_NOT_IN_ANY_LOBBY
 
-
     GetAllLobbiesClientResponse:
         type: object
         properties:
@@ -340,7 +339,6 @@ components:
                           - READY
                           - NOT_READY
                           - IN_GAME
-
                 gameMode:
                   type: object
                   properties:
@@ -349,6 +347,8 @@ components:
                     title:
                       type: string
                     maxPlayerNumber:
+                      type: number
+                    minPlayerNumber:
                       type: number
                     game:
                       type: object

@@ -3,7 +3,6 @@ package ru.rsreu.jackal.api.game.service
 import org.springframework.stereotype.Service
 import ru.rsreu.jackal.api.game.Game
 import ru.rsreu.jackal.api.game.GameMode
-import ru.rsreu.jackal.api.game.dto.GameInfo
 import ru.rsreu.jackal.api.game.dto.GameModeInfo
 import ru.rsreu.jackal.api.game.exception.GameModeNotFoundException
 import ru.rsreu.jackal.api.game.repository.GameModeRepository
@@ -17,7 +16,7 @@ class GameService(private val gameRepository: GameRepository, private val gameMo
         }
     }
 
-    fun getGameModeByIdOrThrow(gameModeId: Long): GameMode? {
+    fun getGameModeByIdOrNull(gameModeId: Long): GameMode? {
         return gameModeRepository.findById(gameModeId).orElse(null)
     }
 
@@ -25,9 +24,16 @@ class GameService(private val gameRepository: GameRepository, private val gameMo
         val game = Game(title = title, serviceAddress = serviceAddress, clientAddress = clientAddress)
         gameRepository.save(game)
         modes.forEach {
-            gameModeRepository.save(GameMode(game = game, title = it.title, maxPlayerNumber = it.maxPlayerNumber))
+            gameModeRepository.save(
+                GameMode(
+                    game = game,
+                    title = it.title,
+                    maxPlayerNumber = it.maxPlayerNumber,
+                    minPlayerNumber = it.minPlayerNumber
+                )
+            )
         }
     }
 
-    fun getAllGameInfo(): MutableIterable<Game> = gameRepository.findAll()
+    fun getAllGame(): MutableIterable<Game> = gameRepository.findAll()
 }

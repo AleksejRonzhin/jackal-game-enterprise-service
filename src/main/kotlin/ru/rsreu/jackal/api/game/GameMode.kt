@@ -14,5 +14,7 @@ class GameMode(
 
     val title: String,
 
+    val minPlayerNumber: Int,
+
     val maxPlayerNumber: Int
 )
