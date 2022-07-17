@@ -6,28 +6,21 @@ import ru.rsreu.jackal.api.game.GameMode
 import ru.rsreu.jackal.api.game.dto.GameInfo
 import ru.rsreu.jackal.api.game.dto.GameModeInfo
 import ru.rsreu.jackal.api.game.repository.GameModeRepository
-import ru.rsreu.jackal.api.game.service.GameService
 import ru.rsreu.jackal.api.lobby.dto.ClientLobbyInfo
 import ru.rsreu.jackal.api.lobby.dto.ClientLobbyMemberInfo
-import ru.rsreu.jackal.api.user.service.UserService
+import ru.rsreu.jackal.api.user.repository.UserRepository
 import ru.rsreu.jackal.shared_models.LobbyInfo
 import ru.rsreu.jackal.shared_models.LobbyMemberInfo
 
 @Service
 class TransformResponseService(
-    private val gameService: GameService,
-    private val userService: UserService,
-    private val gameModeRepository: GameModeRepository
+    private val userRepository: UserRepository, private val gameModeRepository: GameModeRepository
 ) {
-
     fun transformLobbiesForClient(lobbies: Collection<LobbyInfo>): Collection<ClientLobbyInfo> =
         lobbies.map { transformLobbyToClientLobby(it) }
 
     private fun transformLobbyToClientLobby(lobbyInfo: LobbyInfo): ClientLobbyInfo {
-        var gameMode: GameMode? = null
-        if (lobbyInfo.gameId != null) {
-            gameMode = gameService.getGameModeByIdOrNull(lobbyInfo.gameId)
-        }
+        val gameMode: GameMode? = lobbyInfo.gameId?.let { gameModeRepository.findById(it) }?.orElse(null)
         return ClientLobbyInfo(
             lobbyInfo.title,
             lobbyInfo.isPublic,
@@ -40,12 +33,12 @@ class TransformResponseService(
         lobbyInfo.hostId == lobbyMemberInfo.userId
 
     private fun getClientUserInfo(lobbyMemberInfo: LobbyMemberInfo, isHost: Boolean): ClientLobbyMemberInfo {
-        val user = userService.getUserById(lobbyMemberInfo.userId)
-        if (user.isEmpty) {
-            return ClientLobbyMemberInfo("", "", lobbyMemberInfo.status, isHost)
-        }
+        val user = userRepository.findById(lobbyMemberInfo.userId)
         return ClientLobbyMemberInfo(
-            user.get().name, user.get().pictureUrl, lobbyMemberInfo.status, isHost
+            if (user.isEmpty) "" else user.get().name,
+            if (user.isEmpty) "" else user.get().pictureUrl,
+            lobbyMemberInfo.status,
+            isHost
         )
     }
 
