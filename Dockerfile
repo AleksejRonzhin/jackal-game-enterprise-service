@@ -15,4 +15,4 @@ WORKDIR $APP_HOME
 
 COPY --from=TEMP_BUILD_IMAGE $APP_HOME/build/libs/$ARTIFACT_NAME .
 
-ENTRYPOINT java -Dspring.datasource.url=$DB_URL -Dspring.datasource.username=$DB_USER -Dspring.datasource.password=$DB_PASSWORD -jar $ARTIFACT_NAME
+ENTRYPOINT java -Dspring.datasource.url=$DB_URL -Dspring.datasource.username=$DB_USER -Dspring.datasource.password=$DB_PASSWORD -Dlobby_service.url=$LOBBY_SERVICE_API_URL -Dsecurity.oauth.vk.auth_url=$VK_AUTH_URL -Dsecurity.oauth.vk.api_version=$VK_API_VERSION -jar -Dsecurity.oauth.yandex.auth_url=$YANDEX_AUTH_URL -Dsecurity.jwt.secret=$JWT_SECRET -Dsecurity.jwt.expiration-ms=$JWT_TIME_EXPIRATION_MS $ARTIFACT_NAME
