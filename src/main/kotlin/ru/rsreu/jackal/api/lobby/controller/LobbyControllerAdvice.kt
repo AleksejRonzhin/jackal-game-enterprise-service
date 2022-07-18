@@ -5,15 +5,29 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.client.ResourceAccessException
 import ru.rsreu.jackal.api.game.exception.GameModeNotFoundException
-import ru.rsreu.jackal.shared_models.responses.ChangeGameResponse
-import ru.rsreu.jackal.shared_models.responses.ChangeGameStatus
+import ru.rsreu.jackal.api.lobby.exception.LobbyServiceFailException
+import ru.rsreu.jackal.shared_models.responses.HttpLobbyResponse
+import ru.rsreu.jackal.shared_models.responses.HttpLobbyResponseStatus
 
 @ControllerAdvice
 class LobbyControllerAdvice {
     @ExceptionHandler(GameModeNotFoundException::class)
     @ResponseStatus(HttpStatus.OK)
-    fun handleGameModeIsNotFoundException(): ResponseEntity<ChangeGameResponse> = ResponseEntity.ok(
-        ChangeGameResponse(responseStatus = ChangeGameStatus.GAME_IS_NOT_FOUND)
+    fun handleGameModeIsNotFoundException(): ResponseEntity<HttpLobbyResponse> = ResponseEntity.ok(
+        HttpLobbyResponse(HttpLobbyResponseStatus.GAME_NOT_FOUND)
+    )
+
+    @ExceptionHandler(LobbyServiceFailException::class)
+    @ResponseStatus(HttpStatus.OK)
+    fun handleLobbyServiceNotAvailable(): ResponseEntity<HttpLobbyResponse> = ResponseEntity.ok(
+        HttpLobbyResponse(HttpLobbyResponseStatus.LOBBY_SERVICE_FAIL)
+    )
+
+    @ExceptionHandler(ResourceAccessException::class)
+    @ResponseStatus(HttpStatus.OK)
+    fun handleResourceAccessException(): ResponseEntity<HttpLobbyResponse> = ResponseEntity.ok(
+        HttpLobbyResponse(HttpLobbyResponseStatus.LOBBY_SERVICE_NOT_AVAILABLE)
     )
 }
