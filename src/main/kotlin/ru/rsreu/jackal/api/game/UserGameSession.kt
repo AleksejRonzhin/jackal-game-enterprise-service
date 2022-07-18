@@ -16,5 +16,5 @@ class UserGameSession(
     @ManyToOne
     val gameSession: GameSession,
 
-    val statisticsJSON: String
+    val statisticsJSON: String? = null
 )

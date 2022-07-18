@@ -7,10 +7,7 @@ import ru.rsreu.jackal.api.TransformResponseService
 import ru.rsreu.jackal.api.game.service.GameService
 import ru.rsreu.jackal.api.lobby.dto.*
 import ru.rsreu.jackal.api.lobby.service.LobbyService
-import ru.rsreu.jackal.shared_models.responses.ChangeGameResponse
-import ru.rsreu.jackal.shared_models.responses.CreateLobbyResponse
-import ru.rsreu.jackal.shared_models.responses.GetLobbyConnectionInfoResponse
-import ru.rsreu.jackal.shared_models.responses.JoinLobbyResponse
+import ru.rsreu.jackal.shared_models.responses.*
 
 
 @RestController

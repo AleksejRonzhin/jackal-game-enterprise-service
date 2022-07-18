@@ -38,3 +38,5 @@ lobby_service:
     connection_info_url: "/lobby/connection-info"
     get_all_lobbies: "/lobby/all"
     change_game: "/lobby/change-game"
+    info_for_start: "/lobby/info-for-start"
+    send-game-session-connection-info: "/lobby/send-game-session-connection-info"

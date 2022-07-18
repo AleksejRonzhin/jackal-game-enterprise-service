@@ -15,12 +15,12 @@ class GameSession(
 
     val startDate: Date,
 
-    val endDate: Date,
+    var endDate: Date? = null,
 
     @Enumerated(EnumType.ORDINAL)
-    val sessionStatus: GameSessionStatus
+    var sessionStatus: GameSessionStatus = GameSessionStatus.STARTED
 )
 
 enum class GameSessionStatus {
-    STARTED, FINISHED, PREMATURELY_ENDED
+    STARTED, FINISHED, PREMATURELY_ENDED, REJECTED
 }
