@@ -1,12 +1,10 @@
-package ru.rsreu.jackal.shared_models.responses
+package ru.rsreu.jackal.shared_models
 
-import ru.rsreu.jackal.shared_models.ResponseBody
+open class HttpResponse(
+    override val responseStatus: HttpResponseStatus
+) : ResponseBody<HttpResponseStatus>
 
-open class HttpLobbyResponse(
-    override val responseStatus: HttpLobbyResponseStatus
-): ResponseBody<HttpLobbyResponseStatus>
-
-enum class HttpLobbyResponseStatus{
+enum class HttpResponseStatus {
     OK,
     LOBBY_SERVICE_NOT_AVAILABLE,
     LOBBY_SERVICE_FAIL,
@@ -19,5 +17,6 @@ enum class HttpLobbyResponseStatus{
     LOBBY_NOT_FOUND,
     WRONG_PASSWORD,
     USER_IN_LOBBY_BLACK_LIST,
-    LOBBY_IN_GAME
+    LOBBY_IN_GAME,
+    LOBBY_MEMBER_NOT_READY
 }

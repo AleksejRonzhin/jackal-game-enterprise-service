@@ -8,9 +8,9 @@ import ru.rsreu.jackal.api.game.dto.*
 import ru.rsreu.jackal.api.game.service.GameService
 import ru.rsreu.jackal.api.lobby.service.LobbyService
 import ru.rsreu.jackal.api.user.service.UserService
+import ru.rsreu.jackal.shared_models.HttpResponse
+import ru.rsreu.jackal.shared_models.HttpResponseStatus
 import ru.rsreu.jackal.shared_models.requests.GameNotStartedRequest
-import ru.rsreu.jackal.shared_models.responses.HttpLobbyResponse
-import ru.rsreu.jackal.shared_models.responses.HttpLobbyResponseStatus
 
 @RestController
 @RequestMapping("/api/game")
@@ -34,15 +34,24 @@ class GameController(
     }
 
     @PostMapping("/start")
-    fun startGame(authentication: Authentication): ResponseEntity<HttpLobbyResponse> {
-        val getLobbyInfoResponse = lobbyService.getLobbyInfoForStart(authentication.principal.toString().toLong())
-        val gameMode = gameService.getGameModeByIdOrThrow(getLobbyInfoResponse.gameModeId)
+    fun startGame(authentication: Authentication): ResponseEntity<HttpResponse> {
+        val lobbyInfoResponse = lobbyService.getLobbyInfoForStart(authentication.principal.toString().toLong())
+        if (lobbyInfoResponse.responseStatus != HttpResponseStatus.OK) {
+            return ResponseEntity.ok(HttpResponse(lobbyInfoResponse.responseStatus))
+        }
+
+        val gameMode = gameService.getGameModeByIdOrThrow(lobbyInfoResponse.gameModeId!!)
         val createGameSessionResponse =
-            gameService.sendCreateGameSessionCreate(gameMode.game, getLobbyInfoResponse.userIds)
+            gameService.sendCreateGameSessionCreate(gameMode, lobbyInfoResponse.userIds!!, lobbyInfoResponse.lobbyId!!)
+        if (createGameSessionResponse.responseStatus != HttpResponseStatus.OK) {
+            return ResponseEntity.ok(HttpResponse(createGameSessionResponse.responseStatus))
+        }
+
         lobbyService.sendInfoAboutGameSession(createGameSessionResponse.playerInfos)
         val users = createGameSessionResponse.playerInfos.map { userService.getUserByIdOrThrow(it.userId) }
         gameService.createGameSession(users, createGameSessionResponse.startDate, gameMode)
-        return ResponseEntity.ok(HttpLobbyResponse(HttpLobbyResponseStatus.OK))
+
+        return ResponseEntity.ok(HttpResponse(HttpResponseStatus.OK))
     }
 
     @PostMapping("/resolve-not-started")

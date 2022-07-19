@@ -40,3 +40,7 @@ lobby_service:
     change_game: "/lobby/change-game"
     info_for_start: "/lobby/info-for-start"
     send-game-session-connection-info: "/lobby/send-game-session-connection-info"
+
+game_service:
+  api:
+    create: "/create-new"

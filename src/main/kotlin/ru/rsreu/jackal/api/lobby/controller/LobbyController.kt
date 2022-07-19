@@ -18,7 +18,7 @@ class LobbyController(
     @PostMapping("/create")
     fun create(
         @RequestBody request: CreateLobbyClientRequest, authentication: Authentication
-    ): ResponseEntity<CreateLobbyResponse> {
+    ): ResponseEntity<CreateResponse> {
         return ResponseEntity.ok(
             lobbyService.create(
                 request.lobbyTitle, request.lobbyPassword, authentication.principal.toString().toLong()
@@ -29,7 +29,7 @@ class LobbyController(
     @PostMapping("/join")
     fun join(
         @RequestBody request: JoinLobbyClientRequest, authentication: Authentication
-    ): ResponseEntity<JoinLobbyResponse> {
+    ): ResponseEntity<JoinResponse> {
         return ResponseEntity.ok(
             lobbyService.join(
                 request.lobbyTitle, request.lobbyPassword, authentication.principal.toString().toLong()
@@ -38,7 +38,7 @@ class LobbyController(
     }
 
     @GetMapping("/connection-info")
-    fun getInfoAboutConnection(authentication: Authentication): ResponseEntity<GetLobbyConnectionInfoResponse> {
+    fun getInfoAboutConnection(authentication: Authentication): ResponseEntity<GetConnectionInfoResponse> {
         return ResponseEntity.ok(
             lobbyService.getInfoAboutSocketConnection(authentication.principal.toString().toLong())
         )

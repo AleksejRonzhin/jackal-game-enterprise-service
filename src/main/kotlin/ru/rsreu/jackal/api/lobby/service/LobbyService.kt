@@ -16,19 +16,19 @@ import ru.rsreu.jackal.shared_models.responses.*
 class LobbyService(
     private val restTemplate: RestTemplate, private val lobbyServiceConfiguration: LobbyServiceConfiguration
 ) {
-    fun create(lobbyName: String, lobbyPassword: String?, hostId: Long): CreateLobbyResponse =
-        restTemplate.postForEntity<CreateLobbyResponse>(
+    fun create(lobbyName: String, lobbyPassword: String?, hostId: Long): CreateResponse =
+        restTemplate.postForEntity<CreateResponse>(
             lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.createLobbyUrlPart,
             CreateLobbyRequest(lobbyName, lobbyPassword, hostId)
         ).body ?: throw LobbyServiceFailException()
 
-    fun join(lobbyTitle: String, lobbyPassword: String?, userId: Long) = restTemplate.postForEntity<JoinLobbyResponse>(
+    fun join(lobbyTitle: String, lobbyPassword: String?, userId: Long) = restTemplate.postForEntity<JoinResponse>(
         lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.joinLobbyUrlPart,
         JoinLobbyRequest(lobbyTitle, lobbyPassword, userId)
     ).body ?: throw LobbyServiceFailException()
 
-    fun getInfoAboutSocketConnection(userId: Long): GetLobbyConnectionInfoResponse =
-        restTemplate.getForEntity<GetLobbyConnectionInfoResponse>(
+    fun getInfoAboutSocketConnection(userId: Long): GetConnectionInfoResponse =
+        restTemplate.getForEntity<GetConnectionInfoResponse>(
             lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.getLobbyConnectionInfoUrlPart + "?userId=${userId}"
         ).body ?: throw LobbyServiceFailException()
 
@@ -41,7 +41,7 @@ class LobbyService(
         lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.getAllLobbiesUrlPart
     ).body ?: throw LobbyServiceFailException()
 
-    fun getLobbyInfoForStart(userId: Long) = restTemplate.getForEntity<GetLobbyInfoForStartResponse>(
+    fun getLobbyInfoForStart(userId: Long) = restTemplate.getForEntity<GetInfoForStartResponse>(
         lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.getLobbyForStartUrlPart + "?userId=${userId}"
     ).body ?: throw LobbyServiceFailException()
 
