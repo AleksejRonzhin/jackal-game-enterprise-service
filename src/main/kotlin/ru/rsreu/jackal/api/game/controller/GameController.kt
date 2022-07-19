@@ -8,6 +8,7 @@ import ru.rsreu.jackal.api.game.dto.*
 import ru.rsreu.jackal.api.game.service.GameService
 import ru.rsreu.jackal.api.lobby.service.LobbyService
 import ru.rsreu.jackal.api.user.service.UserService
+import ru.rsreu.jackal.shared_models.requests.GameNotStartedRequest
 import ru.rsreu.jackal.shared_models.responses.HttpLobbyResponse
 import ru.rsreu.jackal.shared_models.responses.HttpLobbyResponseStatus
 
@@ -36,10 +37,17 @@ class GameController(
     fun startGame(authentication: Authentication): ResponseEntity<HttpLobbyResponse> {
         val getLobbyInfoResponse = lobbyService.getLobbyInfoForStart(authentication.principal.toString().toLong())
         val gameMode = gameService.getGameModeByIdOrThrow(getLobbyInfoResponse.gameModeId)
-        val createGameSessionResponse = gameService.sendCreateGameSessionCreate(gameMode.game, getLobbyInfoResponse.userIds)
+        val createGameSessionResponse =
+            gameService.sendCreateGameSessionCreate(gameMode.game, getLobbyInfoResponse.userIds)
         lobbyService.sendInfoAboutGameSession(createGameSessionResponse.playerInfos)
         val users = createGameSessionResponse.playerInfos.map { userService.getUserByIdOrThrow(it.userId) }
         gameService.createGameSession(users, createGameSessionResponse.startDate, gameMode)
         return ResponseEntity.ok(HttpLobbyResponse(HttpLobbyResponseStatus.OK))
+    }
+
+    @PostMapping("/resolve-not-started")
+    fun resoleNotStarted(@RequestBody request: GameNotStartedRequest): ResponseEntity<Any> {
+        println(request)
+        return ResponseEntity.ok("")
     }
 }
