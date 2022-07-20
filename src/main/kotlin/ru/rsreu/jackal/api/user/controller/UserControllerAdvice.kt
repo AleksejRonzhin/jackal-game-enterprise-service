@@ -9,7 +9,7 @@ import ru.rsreu.jackal.api.user.dto.GetUserInfoResponse
 import ru.rsreu.jackal.api.user.dto.GetUserInfoStatus
 import ru.rsreu.jackal.api.user.exception.UserNotFoundException
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackageClasses = [UserController::class])
 class UserControllerAdvice {
     @ExceptionHandler(UserNotFoundException::class)
     @ResponseStatus(HttpStatus.OK)
