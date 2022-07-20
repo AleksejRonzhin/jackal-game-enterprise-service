@@ -10,14 +10,12 @@ import ru.rsreu.jackal.api.game.exception.GameModeNotFoundException
 import ru.rsreu.jackal.api.game.exception.UsersInLobbyTooMuchException
 import ru.rsreu.jackal.api.game.exception.UsersInLobbyTooSmallException
 import ru.rsreu.jackal.api.lobby.exception.LobbyServiceFailException
-import ru.rsreu.jackal.api.user.dto.GetUserInfoResponse
-import ru.rsreu.jackal.api.user.dto.GetUserInfoStatus
 import ru.rsreu.jackal.api.user.exception.UserNotFoundException
 import ru.rsreu.jackal.shared_models.HttpResponse
 import ru.rsreu.jackal.shared_models.HttpResponseStatus
 
 @RestControllerAdvice(basePackageClasses = [GameController::class])
-class GameControllerAdvice{
+class GameControllerAdvice {
     @ExceptionHandler(GameModeNotFoundException::class)
     @ResponseStatus(HttpStatus.OK)
     fun handleGameModeIsNotFoundException(): ResponseEntity<HttpResponse> = ResponseEntity.ok(
@@ -50,7 +48,7 @@ class GameControllerAdvice{
 
     @ExceptionHandler(UserNotFoundException::class)
     @ResponseStatus(HttpStatus.OK)
-    fun handleHostAlreadyInLobbyException(): ResponseEntity<GetUserInfoResponse> = ResponseEntity.ok(
-        GetUserInfoResponse(responseStatus = GetUserInfoStatus.USER_NOT_FOUND)
+    fun handleHostAlreadyInLobbyException(): ResponseEntity<HttpResponse> = ResponseEntity.ok(
+        HttpResponse(HttpResponseStatus.USER_NOT_FOUND)
     )
 }
