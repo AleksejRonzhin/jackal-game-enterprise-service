@@ -19,5 +19,8 @@ data class LobbyServiceConfiguration(
 
     @Value("\${lobby_service.api.info_for_start}") val getLobbyForStartUrlPart: String,
 
-    @Value("\${lobby_service.api.send-game-session-connection-info}") val sendGameSessionConnectionInfoUrlPart: String
+    @Value("\${lobby_service.api.send-game-session-connection-info}") val sendGameSessionConnectionInfoUrlPart: String,
+
+    @Value("\${lobby_service.api.send-game-session-creation-error-info}")
+    val sendGameSessionCreationErrorInfoUrlPart: String
 )

@@ -1,24 +1,17 @@
-package ru.rsreu.jackal.api.game.controller
+package ru.rsreu.jackal.api.game.controller.game
 
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import ru.rsreu.jackal.api.TransformResponseService
 import ru.rsreu.jackal.api.game.dto.*
 import ru.rsreu.jackal.api.game.service.GameService
-import ru.rsreu.jackal.api.game.service.StartGameService
-import ru.rsreu.jackal.api.lobby.service.LobbyService
-import ru.rsreu.jackal.api.user.service.UserService
-import ru.rsreu.jackal.shared_models.HttpResponse
-import ru.rsreu.jackal.shared_models.HttpResponseStatus
 import ru.rsreu.jackal.shared_models.requests.GameNotStartedRequest
 
 @RestController
 @RequestMapping("/api/game")
 class GameController(
     private val gameService: GameService,
-    private val transformResponseService: TransformResponseService,
-    private val startGameService: StartGameService
+    private val transformResponseService: TransformResponseService
 ) {
     @PostMapping("/register")
     fun register(@RequestBody request: RegisterGameRequest): ResponseEntity<RegisterGameResponse> {
@@ -31,12 +24,6 @@ class GameController(
         val games = gameService.getAllGame()
         val gamesInfo = transformResponseService.transformGamesForClient(games)
         return ResponseEntity.ok(GetAllGamesResponse(gamesInfo, GetAllGamesStatus.OK))
-    }
-
-    @PostMapping("/start")
-    fun startGame(authentication: Authentication): ResponseEntity<HttpResponse> {
-        val responseStatus = startGameService.start(authentication.principal.toString().toLong())
-        return ResponseEntity.ok(HttpResponse(responseStatus))
     }
 
     @PostMapping("/resolve-not-started")

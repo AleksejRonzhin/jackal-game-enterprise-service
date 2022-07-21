@@ -2,52 +2,49 @@ package ru.rsreu.jackal.api.lobby.service
 
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.getForEntity
-import org.springframework.web.client.postForEntity
-import ru.rsreu.jackal.api.lobby.exception.LobbyServiceFailException
 import ru.rsreu.jackal.configuration.LobbyServiceConfiguration
 import ru.rsreu.jackal.shared_models.requests.ChangeGameRequest
 import ru.rsreu.jackal.shared_models.requests.CreateLobbyRequest
 import ru.rsreu.jackal.shared_models.requests.JoinLobbyRequest
 import ru.rsreu.jackal.shared_models.requests.SendGameSessionConnectionInfoRequest
 import ru.rsreu.jackal.shared_models.responses.*
+import java.util.*
 
 @Service
 class LobbyService(
-    private val restTemplate: RestTemplate, private val lobbyServiceConfiguration: LobbyServiceConfiguration
+    restTemplate: RestTemplate,
+    private val lobbyServiceConfiguration: LobbyServiceConfiguration,
 ) {
-    fun create(lobbyName: String, lobbyPassword: String?, hostId: Long): CreateResponse =
-        restTemplate.postForEntity<CreateResponse>(
-            lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.createLobbyUrlPart,
-            CreateLobbyRequest(lobbyName, lobbyPassword, hostId)
-        ).body ?: throw LobbyServiceFailException()
+    private val sender: LobbyHttpSender = LobbyHttpSender(restTemplate, lobbyServiceConfiguration)
 
-    fun join(lobbyTitle: String, lobbyPassword: String?, userId: Long) = restTemplate.postForEntity<JoinResponse>(
-        lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.joinLobbyUrlPart,
-        JoinLobbyRequest(lobbyTitle, lobbyPassword, userId)
-    ).body ?: throw LobbyServiceFailException()
+    fun create(lobbyName: String, lobbyPassword: String?, hostId: Long): CreateResponse =
+        sender.sendPostToApiUrl(
+            lobbyServiceConfiguration.createLobbyUrlPart,
+            CreateLobbyRequest(lobbyName, lobbyPassword, hostId)
+        )
+
+    fun join(lobbyTitle: String, lobbyPassword: String?, userId: Long): JoinResponse =
+        sender.sendPostToApiUrl(
+            lobbyServiceConfiguration.joinLobbyUrlPart,
+            JoinLobbyRequest(lobbyTitle, lobbyPassword, userId)
+        )
 
     fun getInfoAboutSocketConnection(userId: Long): GetConnectionInfoResponse =
-        restTemplate.getForEntity<GetConnectionInfoResponse>(
-            lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.getLobbyConnectionInfoUrlPart + "?userId=${userId}"
-        ).body ?: throw LobbyServiceFailException()
+        sender.sendGetToApiUrl(lobbyServiceConfiguration.getLobbyConnectionInfoUrlPart + "?userId=${userId}")
 
-    fun changeGame(gameModeId: Long, userId: Long): ChangeGameResponse = restTemplate.postForEntity<ChangeGameResponse>(
-        lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.changeGameUrlPart,
-        ChangeGameRequest(gameModeId, userId)
-    ).body ?: throw LobbyServiceFailException()
+    fun changeGame(gameModeId: Long, userId: Long): ChangeGameResponse =
+        sender.sendPostToApiUrl(lobbyServiceConfiguration.changeGameUrlPart, ChangeGameRequest(gameModeId, userId))
 
-    fun getAllLobbiesInfo(): GetAllLobbiesResponse = restTemplate.getForEntity<GetAllLobbiesResponse>(
-        lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.getAllLobbiesUrlPart
-    ).body ?: throw LobbyServiceFailException()
+    fun getAllLobbiesInfo(): GetAllLobbiesResponse =
+        sender.sendGetToApiUrl(lobbyServiceConfiguration.getAllLobbiesUrlPart)
 
-    fun getLobbyInfoForStart(userId: Long) = restTemplate.getForEntity<GetInfoForStartResponse>(
-        lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.getLobbyForStartUrlPart + "?userId=${userId}"
-    ).body ?: throw LobbyServiceFailException()
+    fun getLobbyInfoForStart(userId: Long): GetInfoForStartResponse =
+        sender.sendGetToApiUrl(lobbyServiceConfiguration.getLobbyForStartUrlPart + "?userId=${userId}")
 
-    fun sendInfoAboutGameSession(playerInfos: Collection<PlayerInfo>) =
-        restTemplate.postForEntity<SendGameSessionConnectionInfoResponse>(
-            lobbyServiceConfiguration.lobbyServiceUrl + lobbyServiceConfiguration.sendGameSessionConnectionInfoUrlPart,
-            SendGameSessionConnectionInfoRequest(playerInfos)
-        ).body ?: throw LobbyServiceFailException()
+    fun sendInfoAboutGameSession(lobbyId: UUID): SendGameSessionConnectionInfoResponse =
+        sender.sendPostToApiUrl(
+            lobbyServiceConfiguration.sendGameSessionConnectionInfoUrlPart,
+            SendGameSessionConnectionInfoRequest(lobbyId)
+        )
 }
+

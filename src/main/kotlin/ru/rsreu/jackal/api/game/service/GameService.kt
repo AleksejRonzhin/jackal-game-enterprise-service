@@ -1,23 +1,17 @@
 package ru.rsreu.jackal.api.game.service
 
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.postForEntity
 import ru.rsreu.jackal.api.game.Game
 import ru.rsreu.jackal.api.game.GameMode
 import ru.rsreu.jackal.api.game.GameSession
 import ru.rsreu.jackal.api.game.UserGameSession
 import ru.rsreu.jackal.api.game.dto.GameModeInfo
 import ru.rsreu.jackal.api.game.exception.GameModeNotFoundException
-import ru.rsreu.jackal.api.game.exception.GameServiceFailException
 import ru.rsreu.jackal.api.game.repository.GameModeRepository
 import ru.rsreu.jackal.api.game.repository.GameRepository
 import ru.rsreu.jackal.api.game.repository.GameSessionRepository
 import ru.rsreu.jackal.api.game.repository.UserGameSessionRepository
 import ru.rsreu.jackal.api.user.User
-import ru.rsreu.jackal.configuration.GameServiceConfiguration
-import ru.rsreu.jackal.shared_models.requests.CreateGameSessionRequest
-import ru.rsreu.jackal.shared_models.responses.CreateGameSessionResponse
 import java.util.*
 
 @Service
@@ -26,8 +20,6 @@ class GameService(
     private val gameModeRepository: GameModeRepository,
     private val gameSessionRepository: GameSessionRepository,
     private val userGameSessionRepository: UserGameSessionRepository,
-    private val restTemplate: RestTemplate,
-    private val gameServiceConfiguration: GameServiceConfiguration
 ) {
     fun checkGameIsExistsOrThrow(gameModeId: Long) {
         if (!gameModeRepository.existsById(gameModeId)) {
@@ -55,18 +47,6 @@ class GameService(
     }
 
     fun getAllGame(): MutableIterable<Game> = gameRepository.findAll()
-
-    fun sendCreateGameSessionCreate(
-        gameMode: GameMode,
-        userIds: Collection<Long>,
-        lobbyId: UUID
-    ): CreateGameSessionResponse {
-        val url = gameMode.game.serviceAddress + gameServiceConfiguration.createGameSessionUrlPart
-        return restTemplate.postForEntity<CreateGameSessionResponse>(
-            url,
-            CreateGameSessionRequest(lobbyId.toString(), userIds, gameMode.title)
-        ).body ?: throw GameServiceFailException()
-    }
 
     fun createGameSession(users: Collection<User>, startDate: Date, gameMode: GameMode) {
         val gameSession = GameSession(gameMode = gameMode, startDate = startDate)

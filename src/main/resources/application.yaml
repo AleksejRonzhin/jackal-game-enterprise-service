@@ -39,8 +39,8 @@ lobby_service:
     get_all_lobbies: "/lobby/all"
     change_game: "/lobby/change-game"
     info_for_start: "/lobby/info-for-start"
-    send-game-session-connection-info: "/lobby/send-game-session-connection-info"
-
+    send-game-session-connection-info: "/lobby/send-game-session-creation-info"
+    send-game-session-creation-error-info: "/lobby/send-creation-error-info"
 game_service:
   api:
     create: "/create-new"

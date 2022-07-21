@@ -1,7 +1,7 @@
 package ru.rsreu.jackal.shared_models.requests
 
-import ru.rsreu.jackal.shared_models.responses.PlayerInfo
+import java.util.*
 
 data class SendGameSessionConnectionInfoRequest(
-    val playerInfos: Collection<PlayerInfo>
+    val lobbyId: UUID
 )
