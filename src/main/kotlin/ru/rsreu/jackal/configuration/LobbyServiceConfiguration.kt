@@ -22,5 +22,7 @@ data class LobbyServiceConfiguration(
     @Value("\${lobby_service.api.send-game-session-connection-info}") val sendGameSessionConnectionInfoUrlPart: String,
 
     @Value("\${lobby_service.api.send-game-session-creation-error-info}")
-    val sendGameSessionCreationErrorInfoUrlPart: String
+    val sendGameSessionCreationErrorInfoUrlPart: String,
+
+    @Value("\${lobby_service.api.send-rejected-game-info}") val sendRejectedGameInfoUrlPart: String
 )

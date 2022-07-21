@@ -41,6 +41,7 @@ lobby_service:
     info_for_start: "/lobby/info-for-start"
     send-game-session-connection-info: "/lobby/send-game-session-creation-info"
     send-game-session-creation-error-info: "/lobby/send-creation-error-info"
+    send-rejected-game-info: "/lobby/send-rejected-game-info"
 game_service:
   api:
     create: "/create-new"
