@@ -44,7 +44,10 @@ class StartGameService(
         try {
             val gameMode = gameService.getGameModeByIdOrThrow(lobbyInfoResponse.gameModeId!!)
 
-            checkUsersIsEnoughOrThrow(lobbyInfoResponse.userIds!!.size, gameMode)
+            //checkUsersIsEnoughOrThrow(lobbyInfoResponse.userIds!!.size, gameMode) //TODO Закомменитровано для тестирования!!!
+
+            // Перенес сюда, потому что данные улетают на гейм без проверки есть ли такие пользователи вообще или нет
+            val users = lobbyInfoResponse.userIds!!.map { userService.getUserByIdOrThrow(it) }
 
             val createGameSessionResponse =
                 sendCreateGameSessionCreate(gameMode, lobbyInfoResponse.userIds, lobbyId)
@@ -52,7 +55,6 @@ class StartGameService(
                 return createGameSessionResponse.responseStatus
             }
 
-            val users = lobbyInfoResponse.userIds.map { userService.getUserByIdOrThrow(it) }
             gameService.createGameSession(users, createGameSessionResponse.startDate, gameMode)
 
             val sendInfoResponse = lobbyService.sendInfoAboutGameSession(lobbyId)

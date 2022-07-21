@@ -12,7 +12,7 @@ class GameHttpSender(val restTemplate: RestTemplate) {
             .onFailure { throw GameServiceNotAvailableException() }.getOrThrow().body
             ?: throw GameServiceFailException()
 
-    inline fun <reified T> sentGetToApiUrl(fullApiUrl: String): T =
+    inline fun <reified T> sendGetToApiUrl(fullApiUrl: String): T =
         restTemplate.runCatching { getForEntity<T>(fullApiUrl) }.onFailure { throw GameServiceNotAvailableException() }
             .getOrThrow().body ?: throw GameServiceFailException()
 }

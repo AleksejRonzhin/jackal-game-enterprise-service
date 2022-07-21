@@ -44,3 +44,4 @@ lobby_service:
 game_service:
   api:
     create: "/create-new"
+    get_connection_info: "/reconnect"
