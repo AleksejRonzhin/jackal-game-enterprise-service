@@ -16,7 +16,7 @@ class UserGameSession(
     @ManyToOne
     val gameSession: GameSession,
 
-    val statisticsJSON: String? = null,
+    var statisticsJSON: String? = null,
 
     var status: UserGameSessionStatus = UserGameSessionStatus.PROCESS
 )

@@ -6,6 +6,7 @@ import ru.rsreu.jackal.api.TransformResponseService
 import ru.rsreu.jackal.api.game.dto.*
 import ru.rsreu.jackal.api.game.service.GameService
 import ru.rsreu.jackal.api.user.service.UserService
+import ru.rsreu.jackal.shared_models.requests.FinishGameRequest
 
 @RestController
 @RequestMapping("/api/game")
@@ -33,5 +34,11 @@ class GameController(
         val user = userService.getUserByIdOrThrow(userId)
         gameService.userFinish(user)
         gameService.sendUserFinishToLobby(userId)
+    }
+
+    @PostMapping("/finish")
+    fun finish(@RequestBody request: FinishGameRequest) {
+        gameService.finish(request.statistics, request.endDate)
+        gameService.sendFinishToLobby(request.lobbyId)
     }
 }

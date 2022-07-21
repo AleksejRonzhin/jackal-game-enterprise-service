@@ -12,6 +12,7 @@ import ru.rsreu.jackal.api.game.repository.UserGameSessionRepository
 import ru.rsreu.jackal.api.lobby.service.LobbyHttpSender
 import ru.rsreu.jackal.api.user.User
 import ru.rsreu.jackal.configuration.LobbyServiceConfiguration
+import ru.rsreu.jackal.shared_models.requests.UserStatistics
 import java.util.*
 
 @Service
@@ -71,4 +72,33 @@ class GameService(
     fun sendUserFinishToLobby(userId: Long) {
         lobbySender.sendPostToApiUrl<Any>(lobbyServiceConfiguration.userFinishGameUrlPart + "?userId=$userId")
     }
+
+    fun finish(statistics: Collection<UserStatistics>, endDate: Date) {
+        val gameSession = getGameSessionByUserId(statistics.first().userId) ?: return
+        gameSession.endDate = endDate
+        gameSession.sessionStatus = GameSessionStatus.FINISHED
+        gameSessionRepository.save(gameSession)
+
+        statistics.forEach {
+            val userGameSession = userGameSessionRepository.findUserGameSessionByUserIdAndGameSessionStatus(
+                it.userId,
+                GameSessionStatus.STARTED
+            )
+            if (userGameSession != null) {
+                userGameSession.status = UserGameSessionStatus.FINISHED
+                userGameSession.statisticsJSON = it.statisticsJSON
+                userGameSessionRepository.save(userGameSession)
+            }
+        }
+    }
+
+    fun getGameSessionByUserId(userId: Long): GameSession? =
+        userGameSessionRepository.findUserGameSessionByUserIdAndGameSessionStatus(
+            userId, GameSessionStatus.STARTED
+        )?.gameSession
+
+    fun sendFinishToLobby(lobbyId: Long) {
+        lobbySender.sendPostToApiUrl<Any>(lobbyServiceConfiguration.finishGameUrlPart + "?lobbyId=$lobbyId")
+    }
+
 }

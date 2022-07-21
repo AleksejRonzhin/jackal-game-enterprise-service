@@ -26,5 +26,7 @@ data class LobbyServiceConfiguration(
 
     @Value("\${lobby_service.api.send-rejected-game-info}") val sendRejectedGameInfoUrlPart: String,
 
-    @Value("\${lobby_service.api.user-finish-game}") val userFinishGameUrlPart: String
+    @Value("\${lobby_service.api.user-finish-game}") val userFinishGameUrlPart: String,
+
+    @Value("\${lobby_service.api.finish-game}") val finishGameUrlPart: String
 )

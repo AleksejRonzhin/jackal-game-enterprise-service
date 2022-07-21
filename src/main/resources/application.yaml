@@ -43,6 +43,7 @@ lobby_service:
     send-game-session-creation-error-info: "/lobby/send-creation-error-info"
     send-rejected-game-info: "/lobby/send-rejected-game-info"
     user-finish-game: "/lobby/user-finish-game"
+    finish-game: "/lobby/finish-game"
 game_service:
   api:
     create: "/create-new"
