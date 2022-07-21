@@ -5,13 +5,16 @@ import org.springframework.web.bind.annotation.*
 import ru.rsreu.jackal.api.TransformResponseService
 import ru.rsreu.jackal.api.game.dto.*
 import ru.rsreu.jackal.api.game.service.GameService
+import ru.rsreu.jackal.api.user.service.UserService
 
 @RestController
 @RequestMapping("/api/game")
 class GameController(
     private val gameService: GameService,
-    private val transformResponseService: TransformResponseService
+    private val userService: UserService,
+    private val transformResponseService: TransformResponseService,
 ) {
+
     @PostMapping("/register")
     fun register(@RequestBody request: RegisterGameRequest): ResponseEntity<RegisterGameResponse> {
         gameService.registerGame(request.title, request.serviceAddress, request.clientAddress, request.modes)
@@ -23,5 +26,12 @@ class GameController(
         val games = gameService.getAllGame()
         val gamesInfo = transformResponseService.transformGamesForClient(games)
         return ResponseEntity.ok(GetAllGamesResponse(gamesInfo, GetAllGamesStatus.OK))
+    }
+
+    @PostMapping("/user-finish")
+    fun finish(@RequestParam userId: Long) {
+        val user = userService.getUserByIdOrThrow(userId)
+        gameService.userFinish(user)
+        gameService.sendUserFinishToLobby(userId)
     }
 }

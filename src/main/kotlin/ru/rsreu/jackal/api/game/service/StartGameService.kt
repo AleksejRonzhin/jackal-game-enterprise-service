@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import ru.rsreu.jackal.api.game.GameMode
 import ru.rsreu.jackal.api.game.GameSessionStatus
+import ru.rsreu.jackal.api.game.UserGameSessionStatus
 import ru.rsreu.jackal.api.game.exception.*
 import ru.rsreu.jackal.api.game.repository.GameSessionRepository
 import ru.rsreu.jackal.api.game.repository.UserGameSessionRepository
@@ -36,9 +37,7 @@ class StartGameService(
     private val lobbySender = LobbyHttpSender(restTemplate, lobbyServiceConfiguration)
 
     fun sendCreateGameSessionCreate(
-        gameMode: GameMode,
-        userIds: Collection<Long>,
-        lobbyId: UUID
+        gameMode: GameMode, userIds: Collection<Long>, lobbyId: UUID
     ): CreateGameSessionResponse {
         return gameSender.sendPostToApiUrl(
             gameMode.game.serviceAddress + gameServiceConfiguration.createGameSessionUrlPart,
@@ -57,11 +56,9 @@ class StartGameService(
 
             //checkUsersIsEnoughOrThrow(lobbyInfoResponse.userIds!!.size, gameMode) //TODO Закомменитровано для тестирования!!!
 
-            // Перенес сюда, потому что данные улетают на гейм без проверки есть ли такие пользователи вообще или нет
             val users = lobbyInfoResponse.userIds!!.map { userService.getUserByIdOrThrow(it) }
 
-            val createGameSessionResponse =
-                sendCreateGameSessionCreate(gameMode, lobbyInfoResponse.userIds, lobbyId)
+            val createGameSessionResponse = sendCreateGameSessionCreate(gameMode, lobbyInfoResponse.userIds, lobbyId)
             if (createGameSessionResponse.responseStatus != HttpResponseStatus.OK) {
                 return createGameSessionResponse.responseStatus
             }
@@ -75,8 +72,7 @@ class StartGameService(
             return HttpResponseStatus.OK
         } catch (exception: Exception) {
             throw GameSessionCreationException(
-                lobbyId,
-                when (exception) {
+                lobbyId, when (exception) {
                     is GameServiceNotAvailableException -> GameSessionCreationError.GAME_SERVICE_NOT_AVAILABLE
                     is GameServiceFailException -> GameSessionCreationError.GAME_SERVICE_FAIL
                     is UsersInLobbyTooSmallException -> GameSessionCreationError.USERS_IN_LOBBY_TOO_SMALL
@@ -100,12 +96,16 @@ class StartGameService(
 
     fun rejectGame(notConnectedUserId: Long) {
         val gameSession = userGameSessionRepository.findUserGameSessionByUserIdAndGameSessionStatus(
-            notConnectedUserId,
-            GameSessionStatus.STARTED
+            notConnectedUserId, GameSessionStatus.STARTED
         )?.gameSession
         gameSession?.sessionStatus = GameSessionStatus.REJECTED
         if (gameSession != null) {
             gameSessionRepository.save(gameSession)
+            val userGameSessions = userGameSessionRepository.findByGameSession(gameSession)
+            userGameSessions.forEach {
+                it.status = UserGameSessionStatus.FINISHED
+                userGameSessionRepository.save(it)
+            }
         }
     }
 
