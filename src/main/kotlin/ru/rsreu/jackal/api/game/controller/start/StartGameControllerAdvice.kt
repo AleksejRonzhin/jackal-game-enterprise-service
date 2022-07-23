@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.client.RestTemplate
 import ru.rsreu.jackal.api.game.exception.GameSessionCreationException
-import ru.rsreu.jackal.api.lobby.exception.LobbyNotAvailableException
+import ru.rsreu.jackal.api.lobby.exception.LobbyServiceNotAvailableException
 import ru.rsreu.jackal.api.lobby.exception.LobbyServiceFailException
 import ru.rsreu.jackal.api.lobby.service.LobbyHttpSender
 import ru.rsreu.jackal.configuration.LobbyServiceConfiguration
@@ -29,7 +29,7 @@ class StartGameControllerAdvice(
         HttpResponse(HttpResponseStatus.LOBBY_SERVICE_FAIL)
     )
 
-    @ExceptionHandler(LobbyNotAvailableException::class)
+    @ExceptionHandler(LobbyServiceNotAvailableException::class)
     @ResponseStatus(HttpStatus.OK)
     fun handleResourceAccessException(): ResponseEntity<HttpResponse> = ResponseEntity.ok(
         HttpResponse(HttpResponseStatus.LOBBY_SERVICE_NOT_AVAILABLE)
